@@ -17,14 +17,12 @@ class TransferController extends Controller
     {
         $from = $request->from ?? firstDayOfMonth();
         $to = $request->to ?? date("Y-m-d");
-        $filter = $request->filter ?? 'PKR';
 
-        $accounts = accounts::currentBranch()->where('currency', $filter)->get();
+        $accounts = accounts::all();
 
-        $filter_ids = $accounts->pluck('id')->toArray();
-        $transfers = transfer::currentBranch()->whereBetween('date', [$from, $to])->whereIn('from', $filter_ids)->orWhereIn('to', $filter_ids)->get();
+        $transfers = transfer::whereBetween('date', [$from, $to])->get();
         
-        return view('finance.transfer.index', compact('transfers', 'accounts', 'from', 'to', 'filter'));
+        return view('finance.transfer.index', compact('transfers', 'accounts', 'from', 'to'));
     }
 
     /**
@@ -59,15 +57,14 @@ class TransferController extends Controller
                     'to' => $request->to,
                     'date' => $request->date,
                     'amount' => $request->amount,
-                    'branch_id' => auth()->user()->branch_id,
                     'notes' => $request->notes,
                     'refID' => $ref,
                 ]
             );
             $fromAccount = $transfer->fromAccount->title;
             $toAccount = $transfer->toAccount->title;
-            createTransaction($request->from,$request->date, 0, $request->amount, auth()->user()->branch_id, " Transfered to $toAccount <br> $request->notes", $ref);
-            createTransaction($request->to, $request->date, $request->amount, 0, auth()->user()->branch_id, " Transfered from $fromAccount <br> $request->notes", $ref);
+            createTransaction($request->from,$request->date, 0, $request->amount, " Transfered to $toAccount <br> $request->notes", $ref);
+            createTransaction($request->to, $request->date, $request->amount, 0, " Transfered from $fromAccount <br> $request->notes", $ref);
             DB::commit();
             return back()->with('success', "Transfered Successfully");
         }

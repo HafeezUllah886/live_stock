@@ -17,25 +17,19 @@ class accountsSeeder extends Seeder
             'title'     => "Cash Account",
             'type'      => "Cash",
             'category'  => "Business",
-            'currency'  => "PKR",
             'status'    => "Active",
-            'branch_id' => 1,
         ]);
 
         accounts::create([
-            'title'     => "Test Supplier",
-            'category'  => "Supplier",
-            'currency'  => "PKR",
+            'title'     => "Walk-In Vendor",
+            'category'  => "Vendor",
             'status'    => "Active",
-            'branch_id' => 1,
         ]);
 
         accounts::create([
-            'title'     => "Test Customer",
+            'title'     => "Walk-In Customer",
             'category'  => "Customer",
-            'currency'  => "PKR",
             'status'    => "Active",
-            'branch_id' => 1,
         ]);
 
     }

@@ -18,8 +18,8 @@ class ExpensesController extends Controller
     {
         $from = $request->from ?? firstDayofMonth();
         $to = $request->to ?? date("Y-m-d");
-        $expenses = expenses::currentBranch()->whereBetween('date', [$from, $to])->orderby('id', 'desc')->get();
-        $accounts = accounts::business()->currentBranch()->get();
+        $expenses = expenses::whereBetween('date', [$from, $to])->orderby('id', 'desc')->get();
+        $accounts = accounts::business()->get();
         $categories = expenseCategories::all();
         return view('finance.expense.index', compact('expenses', 'accounts', 'categories'));
     }
@@ -48,12 +48,11 @@ class ExpensesController extends Controller
                     'amount' => $request->amount,
                     'date' => $request->date,
                     'notes' => $request->notes,
-                    'branch_id' => auth()->user()->branch_id,
                     'refID' => $ref,
                 ]
             );
 
-            createTransaction($request->accountID, $request->date, 0, $request->amount, auth()->user()->branch_id, "Expense - ". $request->notes, $ref);
+            createTransaction($request->accountID, $request->date, 0, $request->amount, "Expense - ". $request->notes, $ref);
 
             DB::commit();
             return back()->with('success', 'Expense Saved');

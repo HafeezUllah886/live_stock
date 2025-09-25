@@ -60,14 +60,14 @@ function lastDayOfPreviousYear() {
 
 function projectNameAuth()
 {
-    return "NASAR POULTRY";
+    return "LIVE STOCK";
 }
 
 function projectNameHeader()
 {
-    return "NASAR POULTRY";
+    return "LIVE STOCK";
 }
 function projectNameShort()
 {
-    return "NP";
+    return "LS";
 }

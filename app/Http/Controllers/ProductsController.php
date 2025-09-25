@@ -45,20 +45,10 @@ class ProductsController extends Controller
             ]
         );
 
-        $product = products::create($request->only(['name', 'pprice', 'sprice', 'for_production']));
+        $product = products::create($request->only(['name']));
 
         $units = $request->unit_names;
 
-        foreach($units as $key => $unit)
-        {
-            product_units::create(
-                [
-                    'product_id' => $product->id,
-                    'name' => $unit,
-                    'value' =>  $request->unit_values[$key],
-                ]
-            );
-        }
 
         return back()->with('success', 'Product Created');
     }
@@ -95,7 +85,7 @@ class ProductsController extends Controller
         );
 
         $product = products::find($id);
-        $product->update($request->only(['name', 'pprice', 'sprice', 'for_production', 'status']));
+        $product->update($request->only(['name', 'status']));
 
         return redirect()->back()->with('success', 'Product Updated');
     }

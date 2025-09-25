@@ -11,14 +11,12 @@
                         <thead>
                             <th>#</th>
                             <th>Title</th>
-                            <th>Currency</th>
                             @if ($filter == 'Business')
                                 <th>Type</th>
                             @endif
-                            @if ($filter == 'Supplier' || $filter == 'Customer')
+                            @if ($filter == 'Vendor' || $filter == 'Customer' || $filter == 'Factory' || $filter == 'Transport')
                                 <th>Address</th>
                             @endif
-                            <th>Branch</th>
                             <th>Status</th>
                             <th>Current Balance</th>
                             <th>Action</th>
@@ -28,14 +26,12 @@
                                 <tr>
                                     <td>{{ $key + 1 }}</td>
                                     <td>{{ $account->title }}</td>
-                                    <td>{{ $account->currency }}</td>
                                     @if ($filter == 'Business')
                                         <td>{{ $account->type }}</td>
                                     @endif
-                                    @if ($filter == 'Supplier' || $filter == 'Customer')
+                                    @if ($filter == 'Vendor' || $filter == 'Customer' || $filter == 'Factory' || $filter == 'Transport')
                                         <td>{{ $account->address }}</td>
                                     @endif
-                                    <td>{{ $account->branch->name }}</td>
                                     <td><a href="{{ route('account.status', [$account->id]) }}"
                                             class="badge bg-{{ $account->status == 'Active' ? 'success' : 'danger' }}">{{ $account->status }}</a>
                                     </td>

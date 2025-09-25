@@ -16,25 +16,11 @@ class productsSeeder extends Seeder
     public function run(): void
     {
         $data = [
-            ['name' => "Egg for Eating","pprice" => 15, "sprice" => 20, 'for_production' => 'No', 'status' => 'Active'],
-            ['name' => "Egg for Production","pprice" => 15, "sprice" => 20, 'for_production' => 'Yes', 'status' => 'Active'],
+            ['name' => "Cattle", 'status' => 'Active'],
+            ['name' => "Sheep", 'status' => 'Active'],
+            ['name' => "Goat", 'status' => 'Active'],
            
         ];
         products::insert($data);
-
-        $data1 = [
-            ['product_id' => 1, 'name' => 'Pieces', 'value' => 1],
-            ['product_id' => 1, 'name' => 'Dzn', 'value' => 12],
-            ['product_id' => 1, 'name' => 'Tray', 'value' => 30],
-            ['product_id' => 1, 'name' => 'Carton', 'value' => 100],
-            ['product_id' => 2, 'name' => 'Pieces', 'value' => 1],
-            ['product_id' => 2, 'name' => 'Dzn', 'value' => 12],
-            ['product_id' => 2, 'name' => 'Tray', 'value' => 30],
-            ['product_id' => 2, 'name' => 'Carton', 'value' => 100],
-           
-        ];
-
-        product_units::insert($data1);
-
     }
 }

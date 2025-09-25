@@ -18,7 +18,6 @@ class userSeeder extends Seeder
             'name' => "Admin",
             'password' => Hash::make("admin"),
             'role' => 'Admin',
-            'branch_id' => 1,
             'contact' => "03451231237"
         ]);
        

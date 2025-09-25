@@ -83,8 +83,16 @@
                                     data-key="t-checkboxs-radios">Customer Accounts</a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{ route('accountsList', 'Supplier') }}" class="nav-link"
-                                    data-key="t-pickers">Supplier Accounts </a>
+                                <a href="{{ route('accountsList', 'Vendor') }}" class="nav-link"
+                                    data-key="t-pickers">Vendor Accounts </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('accountsList', 'Factory') }}" class="nav-link"
+                                    data-key="t-pickers">Factory Accounts </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('accountsList', 'Transporter') }}" class="nav-link"
+                                    data-key="t-pickers">Transporter Accounts </a>
                             </li>
                             <li class="nav-item">
                                 <a href="{{ route('accounts_adjustments.index') }}" class="nav-link"
@@ -102,14 +110,14 @@
                     </div>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link menu-link" href="#branches" data-bs-toggle="collapse" role="button"
+                    <a class="nav-link menu-link" href="#warehouses" data-bs-toggle="collapse" role="button"
                         aria-expanded="false" aria-controls="sidebarApps">
-                        <i class="ri-apps-2-line"></i> <span data-key="t-apps">Branches</span>
+                        <i class="ri-apps-2-line"></i> <span data-key="t-apps">Warehouses</span>
                     </a>
-                    <div class="collapse menu-dropdown" id="branches">
+                    <div class="collapse menu-dropdown" id="warehouses">
                         <ul class="nav nav-sm flex-column">
                             <li class="nav-item">
-                                <a href="{{ route('branches.index') }}" class="nav-link" data-key="t-chat">Branches
+                                <a href="{{ route('warehouses.index') }}" class="nav-link" data-key="t-chat">Warehouses
                                     List </a>
                             </li>
                         </ul>

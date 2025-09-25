@@ -26,35 +26,15 @@
                                         class="form-control">
                                 </div>
                             </div>
-                            <div class="col-md-6 ">
-                                <div class="form-group">
-                                    <label for="currency">Currency</label>
-                                    <select name="currency" id="currency" class="form-control">
-                                        <option value="PKR">PKR</option>
-                                        <option value="AFG">AFG</option>
-                                        <option value="USD">USD</option>
-                                        <option value="TMN">TMN</option>
-                                    </select>
-                                </div>
-                            </div>
-
                             <div class="col-md-6 mt-2">
                                 <div class="form-group">
                                     <label for="category">Category</label>
                                     <select name="category" id="category" class="form-control" onchange="checkCat()">
                                         <option value="Business">Business</option>
                                         <option value="Customer">Customer</option>
-                                        <option value="Supplier">Supplier</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group mt-2">
-                                    <label for="branck">Branch</label>
-                                    <select name="branch" id="branch" class="form-control">
-                                        @foreach ($branches as $branch)
-                                            <option value="{{ $branch->id }}">{{ $branch->name }}</option>
-                                        @endforeach
+                                        <option value="Vendor">Vendor</option>
+                                        <option value="Factory">Factory</option>
+                                        <option value="Transporter">Transporter</option>
                                     </select>
                                 </div>
                             </div>
@@ -67,14 +47,14 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-md-6 mt-2 customer supplier">
+                            <div class="col-md-6 mt-2 customer vendor factory transport">
                                 <div class="form-group ">
                                     <label for="address">Address</label>
                                     <input type="text" name="address" id="address" value="{{ old('address') }}"
                                         class="form-control">
                                 </div>
                             </div>
-                            <div class="col-md-6 mt-2 customer s supplier">
+                            <div class="col-md-6 mt-2 customer vendor factory transport">
                                 <div class="form-group">
                                     <label for="contact">Contact #</label>
                                     <input type="text" name="contact" id="contact" value="{{ old('contact') }}"
@@ -114,11 +94,14 @@
             } else {
                 $(".customer").hide();
             }
-            if (cat === "Supplier") {
-                $(".supplier").show();
+            if (cat === "Vendor") {
+                $(".vendor").show();
             }
-            if (cat === "Business") {
-                $(".business").show();
+            if (cat === "Factory") {
+                $(".factory").show();
+            }
+            if (cat === "Transport") {
+                $(".transport").show();
             }
             /*  else
              {

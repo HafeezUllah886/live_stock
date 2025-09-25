@@ -4,31 +4,21 @@
         <div class="col-12">
             <form>
                 <div class="row g-1">
-                    <div class="col-md-3">
+                    <div class="col-md-5">
                         <div class="input-group mb-3">
                             <span class="input-group-text" id="basic-addon1">From</span>
                             <input type="date" class="form-control" placeholder="Username" name="from"
                                 value="{{ $from }}" aria-label="Username" aria-describedby="basic-addon1">
                         </div>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-5">
                         <div class="input-group mb-3">
                             <span class="input-group-text" id="basic-addon1">To</span>
                             <input type="date" class="form-control" placeholder="Username" name="to"
                                 value="{{ $to }}" aria-label="Username" aria-describedby="basic-addon1">
                         </div>
                     </div>
-                    <div class="col-md-3">
-                        <div class="input-group mb-3">
-                            <span class="input-group-text" id="basic-addon1">Currency</span>
-                            <select name="filter" id="filter" class="form-control">
-                                @foreach ($accounts->pluck('currency')->unique() as $currency)
-                                    <option value="{{ $currency }}" {{ $currency == $filter ? 'selected' : '' }}>{{ $currency }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
+                    <div class="col-md-2">
                         <input type="submit" value="Filter" class="btn btn-success w-100">
                     </div>
                 </div>

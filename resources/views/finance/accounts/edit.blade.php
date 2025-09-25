@@ -29,17 +29,7 @@
                                         class="form-control">
                                 </div>
                             </div>
-                            <div class="col-md-6 ">
-                                <div class="form-group">
-                                    <label for="currency">Currency</label>
-                                    <select name="currency" id="currency" class="form-control">
-                                        <option value="PKR" {{ $account->currency == 'PKR' ? 'selected' : '' }}>PKR</option>
-                                        <option value="AFG" {{ $account->currency == 'AFG' ? 'selected' : '' }}>AFG</option>
-                                        <option value="USD" {{ $account->currency == 'USD' ? 'selected' : '' }}>USD</option>
-                                        <option value="TMN" {{ $account->currency == 'TMN' ? 'selected' : '' }}>TMN</option>
-                                    </select>
-                                </div>
-                            </div>
+                         
                             @if($account->category == "Business")
                             <div class="col-md-6 mt-2" id="catBox">
                                 <div class="form-group">

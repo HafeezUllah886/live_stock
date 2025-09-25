@@ -185,18 +185,4 @@
             });
         }
     </script>
-
-    <script>
-        function updateTotal() {
-            var total = 0;
-            $("input[id^='currency_']").each(function() {
-                var inputId = $(this).attr('id');
-                var inputVal = $(this).val();
-                var inputValue = $(this).data('value');
-                var value = inputVal * inputValue;
-                total += parseFloat(value);
-            });
-            $("#total").val(total.toFixed(2));
-        }
-    </script>
 @endsection
