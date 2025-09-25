@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('account_adjustments', function (Blueprint $table) {
             $table->id();
             $table->foreignId('account_id')->constrained('accounts','id');
-            $table->foreignId('branch_id')->constrained('branches','id');
             $table->float('amount');
             $table->date('date');
             $table->enum('type',['Credit','Debit']);

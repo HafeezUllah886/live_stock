@@ -14,18 +14,7 @@ class AccountsController extends Controller
 {
     public function index($filter)
     {
-        if(Auth()->user()->role == "Admin")
-        {
-            $accounts = accounts::where('category', $filter)->orderBy('title', 'asc')->get();
-        }
-        else
-        {
-            $accounts = accounts::where('category', $filter)->where('branchID', Auth()->user()->branchID)->orderBy('title', 'asc')->get();
-        }
-        if($filter == "Other")
-        {
-            $accounts = accounts::Other()->get();
-        }
+        $accounts = accounts::where('category', $filter)->orderBy('title', 'asc')->get();
 
         return view('finance.accounts.index', compact('accounts', 'filter'));
     }
@@ -35,17 +24,7 @@ class AccountsController extends Controller
      */
     public function create()
     {
-
-        if(Auth()->user()->role == "Admin")
-        {
-            $branches = branches::all();
-        }
-        else
-        {
-            $branches = branches::where('id', Auth()->user()->branchID)->get();
-        }
-
-        return view('finance.accounts.create', compact('branches'));
+        return view('finance.accounts.create');
     }
 
     /**
@@ -73,8 +52,6 @@ class AccountsController extends Controller
                     'category' => $request->category,
                     'contact' => $request->contact,
                     'address' => $request->address,
-                    'currency' => $request->currency,
-                    'branch_id'  => $request->branch ?? Auth()->user()->branchID,
                 ]
             );
                
@@ -138,7 +115,6 @@ class AccountsController extends Controller
                 'contact' => $request->contact ?? null,
                 'address' => $request->address ?? null,
                 'type' => $request->type ?? "Cash",
-                'currency' => $request->currency ?? "PKR",
             ]
         );
 
@@ -172,22 +148,5 @@ class AccountsController extends Controller
         );
 
         return back()->with('success', "Status Updated");
-    }
-
-    public function methodStatement($user, $method, $from, $to)
-    {
-
-        $transactions = method_transactions::where('userID', $user)->where('method', $method)->whereBetween('date', [$from, $to])->orderBy('date', 'asc')->orderBy('refID', 'asc')->get();
-        $pre_cr = method_transactions::where('userID', $user)->where('method', $method)->whereDate('date', '<', $from)->sum('cr');
-        $pre_db = method_transactions::where('userID', $user)->where('method', $method)->whereDate('date', '<', $from)->sum('db');
-        $pre_balance = $pre_cr - $pre_db;
-
-        $cur_cr = method_transactions::where('userID', $user)->where('method', $method)->sum('cr');
-        $cur_db = method_transactions::where('userID', $user)->where('method', $method)->sum('db');
-
-        $cur_balance = $cur_cr - $cur_db;
-        $user = User::find($user);
-
-        return view('Finance.my_balance.method_statment', compact('method', 'transactions', 'pre_balance', 'cur_balance', 'from', 'to', 'user'));
     }
 }

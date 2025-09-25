@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class branches extends Model
+class warehouses extends Model
 {
 
     use HasFactory;
@@ -17,9 +17,6 @@ class branches extends Model
      *
      * @return string
      */
-    public function getHeaderAttribute($value)
-    {
-        return $value ?? 'assets/header/default.jpg';
-    }
+    
 
 }

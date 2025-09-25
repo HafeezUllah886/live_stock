@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->foreignId('account_id')->constrained('accounts', 'id');
             $table->foreignId('expense_category_id')->constrained('expense_categories', 'id');
-            $table->foreignId('branch_id')->constrained('branches', 'id');
             $table->date('date');
             $table->float('amount');
             $table->text('notes');

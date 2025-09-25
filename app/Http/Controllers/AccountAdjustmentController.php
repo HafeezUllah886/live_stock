@@ -18,9 +18,9 @@ class AccountAdjustmentController extends Controller
     {
         $from = $request->from ?? firstDayOfMonth();
         $to = $request->to ?? lastDayOfMonth();
-        $accountAdjustments = AccountAdjustment::currentBranch()->whereBetween('date', [$from, $to])->get();
+        $accountAdjustments = AccountAdjustment::whereBetween('date', [$from, $to])->get();
 
-        $accounts = accounts::currentBranch()->get();
+        $accounts = accounts::all();
         return view('finance.accounts_adjustments.index', compact('accountAdjustments', 'from', 'to', 'accounts'));
     }
 
@@ -45,7 +45,6 @@ class AccountAdjustmentController extends Controller
 
             $accountAdjustment = AccountAdjustment::create([
                 'account_id' => $request->account_id,
-                'branch_id' => auth()->user()->branch_id,
                 'amount' => $request->amount,
                 'type' => $request->type,
                 'date' => $request->date,
@@ -54,9 +53,9 @@ class AccountAdjustmentController extends Controller
             ]);
 
             if ($request->type == 'Credit') {
-               createTransaction($request->account_id, $request->date, $request->amount, 0, auth()->user()->branch_id, $request->notes, $ref);
+               createTransaction($request->account_id, $request->date, $request->amount, 0, $request->notes, $ref);
             } else {
-               createTransaction($request->account_id, $request->date, 0, $request->amount, auth()->user()->branch_id, $request->notes, $ref);
+               createTransaction($request->account_id, $request->date, 0, $request->amount, $request->notes, $ref);
             }
             
             DB::commit();

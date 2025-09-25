@@ -14,12 +14,10 @@ return new class extends Migration
         Schema::create('accounts', function (Blueprint $table) {
             $table->id();
             $table->string('title');
-            $table->foreignId('branch_id')->nullable()->constrained('branches')->nullOnDelete();
             $table->string('type')->nullable();
             $table->string('category');
             $table->string('contact')->nullable();
             $table->string('address')->nullable();
-            $table->string('currency');
             $table->string('status')->default('Active');
             $table->timestamps();
         });

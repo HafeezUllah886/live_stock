@@ -2,19 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\branches;
+use App\Models\warehouses;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-class BranchesController extends Controller
+class WarehousesController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $branches = branches::all();
-        return view('setting.branches', compact('branches'));
+        $warehouses = warehouses::all();
+        return view('setting.warehouses', compact('warehouses'));
     }
 
     /**
@@ -30,14 +30,14 @@ class BranchesController extends Controller
      */
     public function store(Request $request)
     {
-        branches::create($request->all());
-        return redirect()->route('branches.index')->with('success', 'Branch created successfully.');
+        warehouses::create($request->all());
+        return redirect()->route('warehouses.index')->with('success', 'Warehouse created successfully.');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(branches $branches)
+    public function show(warehouses $warehouse)
     {
         //
     }
@@ -45,7 +45,7 @@ class BranchesController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(branches $branche)
+    public function edit(warehouses $warehouse)
     {
 
     }
@@ -53,17 +53,17 @@ class BranchesController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, branches $branch)
+    public function update(Request $request, warehouses $warehouse)
     {
-        $branch->update($request->all());
-        return redirect()->route('branches.index')->with('success', 'Branch updated successfully.');
+        $warehouse->update($request->all());
+        return redirect()->route('warehouses.index')->with('success', 'Warehouse updated successfully.');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(branches $branches)
+    public function destroy(warehouses $warehouse)
     {
-        //
+       
     }
 }
