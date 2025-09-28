@@ -2,67 +2,39 @@
 @section('content')
     <div class="row">
         <div class="col-12">
-            <form>
-                <div class="row g-1">
-                    <div class="col-md-5">
-                        <div class="input-group mb-3">
-                            <span class="input-group-text" id="basic-addon1">From</span>
-                            <input type="date" class="form-control" placeholder="Username" name="from"
-                                value="{{ $from }}" aria-label="Username" aria-describedby="basic-addon1">
-                        </div>
-                    </div>
-                    <div class="col-md-5">
-                        <div class="input-group mb-3">
-                            <span class="input-group-text" id="basic-addon1">To</span>
-                            <input type="date" class="form-control" placeholder="Username" name="to"
-                                value="{{ $to }}" aria-label="Username" aria-describedby="basic-addon1">
-                        </div>
-                    </div>
-                    <div class="col-md-2">
-                        <input type="submit" value="Filter" class="btn btn-success w-100">
-                    </div>
-                </div>
-            </form>
             <div class="card">
                 <div class="card-header d-flex justify-content-between">
-                    <h3>Transfers</h3>
-                    <button type="button" class="btn btn-primary " data-bs-toggle="modal" data-bs-target="#new">Create
-                        New</button>
+                    <h3>Stock Adjustments</h3>
+                    <button type="button" class="btn btn-primary " data-bs-toggle="modal" data-bs-target="#new">Create New</button>
                 </div>
                 <div class="card-body">
-                    @if ($errors->any())
-                    <div class="alert alert-danger">
-                        <ul>
-                            @foreach ($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
-                        </ul>
-                    </div>
-                @endif
-
                     <table class="table" id="buttons-datatables">
                         <thead>
                             <th>#</th>
                             <th>Ref #</th>
-                            <th>From</th>
-                            <th>To</th>
+                            <th>Product</th>
+                            <th>Warehouse</th>
                             <th>Date</th>
+                            <th>Type</th>
+                            <th>Qty</th>
                             <th>Notes</th>
-                            <th>Amount</th>
                             <th>Action</th>
                         </thead>
                         <tbody>
-                            @foreach ($transfers as $key => $tran)
+                            @foreach ($adjustments as $key => $item)
                                 <tr>
                                     <td>{{ $key + 1 }}</td>
-                                    <td>{{ $tran->refID }}</td>
-                                    <td>{{ $tran->fromAccount->title }}</td>
-                                    <td>{{ $tran->toAccount->title }}</td>
-                                    <td>{{ date('d M Y', strtotime($tran->date)) }}</td>
-                                    <td>{{ $tran->notes }}</td>
-                                    <td>{{ number_format($tran->amount) }}</td>
+                                    <td>{{ $item->refID }}</td>
+                                    <td>{{ $item->product->name }}</td>
+                                    <td>{{ $item->warehouse->name }}</td>
+                                    <td>{{ date('d M Y', strtotime($item->date)) }}</td>
                                     <td>
-                                        <a href="{{ route('transfers.delete', $tran->refID) }}"
+                                        <span class="badge {{ $item->type == 'Stock-In' ? 'bg-info' : 'bg-warning' }}">{{ $item->type }}</span>
+                                    </td>
+                                    <td>{{ number_format($item->qty) }}</td>
+                                    <td>{{ $item->notes }}</td>
+                                    <td>
+                                        <a href="{{ route('stockAdjustment.delete', $item->refID) }}"
                                             class="btn btn-danger">Delete</a>
                                     </td>
                                 </tr>
@@ -80,34 +52,40 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="myModalLabel">Create Transfer</h5>
+                    <h5 class="modal-title" id="myModalLabel">Create Stock Adjustment</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"> </button>
                 </div>
-                <form action="{{ route('transfers.store') }}" method="post">
+                <form action="{{ route('stockAdjustments.store') }}" method="post">
                     @csrf
                     <div class="modal-body">
                         <div class="form-group mt-2">
-                            <label for="from">From</label>
-                            <select name="from" id="from" required class="selectize">
+                            <label for="product">Product</label>
+                            <select name="productID" id="product" required class="selectize">
                                 <option value=""></option>
-                                @foreach ($accounts as $account)
-                                    <option value="{{ $account->id }}">{{ $account->title }} - {{ $account->category }}</option>
+                                @foreach ($products as $product)
+                                    <option value="{{ $product->id }}">{{ $product->name }}</option>
                                 @endforeach
                             </select>
                         </div>
                         <div class="form-group mt-2">
-                            <label for="to">To</label>
-                            <select name="to" id="to" required class="selectize">
-                                <option value=""></option>
-                                @foreach ($accounts as $account)
-                                    <option value="{{ $account->id }}">{{ $account->title }} - {{ $account->category }}</option>
+                            <label for="warehouse">Unit</label>
+                            <select name="warehouseID" id="warehouse" class="form-control">
+                                @foreach ($warehouses as $warehouse)
+                                    <option value="{{$warehouse->id}}">{{$warehouse->name}}</option>
                                 @endforeach
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="amount">Amount</label>
-                            <input type="number" step="any" name="amount" required id="amount"
+                            <label for="qty">Qty</label>
+                            <input type="number" name="qty" required id="qty"
                                 class="form-control">
+                        </div>
+                        <div class="form-group mt-2">
+                            <label for="type">Type</label>
+                            <select name="type" id="type" class="form-control">
+                                <option value="Stock-In">Stock-In</option>
+                                <option value="Stock-Out">Stock-Out</option>
+                            </select>
                         </div>
                         <div class="form-group mt-2">
                             <label for="date">Date</label>
@@ -122,7 +100,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Transfer</button>
+                        <button type="submit" class="btn btn-primary">Save</button>
                     </div>
                 </form>
             </div><!-- /.modal-content -->
@@ -130,16 +108,16 @@
     </div><!-- /.modal -->
 @endsection
 @section('page-css')
-<link rel="stylesheet" href="{{ asset('assets/libs/datatable/datatable.bootstrap5.min.css') }}" />
-<!--datatable responsive css-->
-<link rel="stylesheet" href="{{ asset('assets/libs/datatable/responsive.bootstrap.min.css') }}" />
+    <link rel="stylesheet" href="{{ asset('assets/libs/datatable/datatable.bootstrap5.min.css') }}" />
+    <!--datatable responsive css-->
+    <link rel="stylesheet" href="{{ asset('assets/libs/datatable/responsive.bootstrap.min.css') }}" />
 
-<link rel="stylesheet" href="{{ asset('assets/libs/datatable/buttons.dataTables.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/libs/datatable/buttons.dataTables.min.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/libs/selectize/selectize.min.css') }}">
 @endsection
 
 @section('page-js')
-<script src="{{ asset('assets/libs/datatable/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ asset('assets/libs/datatable/jquery.dataTables.min.js') }}"></script>
     <script src="{{ asset('assets/libs/datatable/dataTables.bootstrap5.min.js') }}"></script>
     <script src="{{ asset('assets/libs/datatable/dataTables.responsive.min.js') }}"></script>
     <script src="{{ asset('assets/libs/datatable/dataTables.buttons.min.js') }}"></script>

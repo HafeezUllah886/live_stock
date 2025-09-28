@@ -53,9 +53,6 @@ class User extends Authenticatable
         return $query->where('role', 'Operator');
     }
 
-    public function branch()
-    {
-        return $this->belongsTo(branches::class, 'branch_id');
-    }
+   
 
 }

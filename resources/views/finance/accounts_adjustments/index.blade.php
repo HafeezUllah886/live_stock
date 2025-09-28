@@ -102,7 +102,7 @@
                             <select name="account_id" id="account_id" required class="selectize">
                                 <option value=""></option>
                                 @foreach ($accounts as $account)
-                                    <option value="{{ $account->id }}">{{ $account->title }} ({{ $account->currency }})
+                                    <option value="{{ $account->id }}">{{ $account->title }} ({{ $account->category }})
                                     </option>
                                 @endforeach
                             </select>

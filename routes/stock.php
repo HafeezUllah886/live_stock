@@ -1,13 +1,15 @@
 <?php
 
-
+use App\Http\Controllers\StockAdjustmentController;
 use App\Http\Controllers\StockController;
-use App\Http\Middleware\adminCheck;
+use App\Http\Middleware\confirmPassword;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware('auth', adminCheck::class)->group(function () {
+Route::middleware('auth')->group(function () {
+    Route::get('products/stock/{id}/{warehouse}/{from}/{to}', [StockController::class, 'show'])->name('stockDetails');
+    Route::resource('product_stock', StockController::class);
 
-   Route::get('stock/{filter}', [StockController::class, 'index'])->name('stock.index');
-
+    Route::resource('stockAdjustments', StockAdjustmentController::class);
+    Route::get('stockAdjustment/delete/{ref}', [StockAdjustmentController::class, 'destroy'])->name('stockAdjustment.delete')->middleware(confirmPassword::class);
 });
 

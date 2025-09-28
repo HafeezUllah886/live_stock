@@ -5,7 +5,7 @@
             <div class="card">
                 <div class="card-header d-flex justify-content-between">
                     <h3>Products</h3>
-                    <a href="{{ route('products.create') }}" class="btn btn-primary">Create New</a>
+                    <a data-bs-toggle="modal" data-bs-target="#new" class="btn btn-primary">Create New</a>
                 </div>
                 <div class="card-body">
                     @if ($errors->any())
@@ -46,7 +46,7 @@
                                             </button>
                                             <ul class="dropdown-menu dropdown-menu-end">
                                                 <li>
-                                                    <a class="dropdown-item" href="{{ route('products.edit', $item->id) }}">
+                                                    <a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#edit_{{ $item->id }}">
                                                         <i class="ri-pencil-fill align-bottom me-2 text-muted"></i>
                                                         Edit
                                                     </a>
@@ -55,10 +55,59 @@
                                         </div>
                                     </td>
                                 </tr>
+                                <div class="modal fade" id="edit_{{ $item->id }}" tabindex="-1" aria-labelledby="edit_{{ $item->id }}Label" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="edit_{{ $item->id }}Label">Edit Product</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <form action="{{ route('products.update', $item->id) }}" method="post">
+                                                @csrf
+                                                @method('PUT')
+                                                <div class="modal-body">
+                                                    <div class="form-group">
+                                                        <label for="name">Name</label>
+                                                        <input type="text" name="name" id="name" class="form-control" value="{{ $item->name }}">
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                    <button type="submit" class="btn btn-primary">Update</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
                             @endforeach
                         </tbody>
                     </table>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Default Modals -->
+    <div class="modal fade" id="new" tabindex="-1" aria-labelledby="newLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="newLabel">Create Product</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="{{ route('products.store') }}" method="post">
+                    @csrf
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="name">Name</label>
+                            <input type="text" name="name" id="name" class="form-control">
+                        </div>
+                    </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </form>
             </div>
         </div>
     </div>

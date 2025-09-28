@@ -28,13 +28,20 @@ class accounts extends Model
         return $query->where('category', 'Customer');
     }
 
-    public function scopeSupplier($query)
+    public function scopeVendor($query)
     {
-        return $query->where('category', 'Supplier');
+        return $query->where('category', 'Vendor');
     }
 
-    public function scopeCurrentBranch($query)
+    public function scopeTransporter($query)
     {
-        return $query->where('branch_id', auth()->user()->branch_id);
+        return $query->where('category', 'Transporter');
     }
+
+    public function scopeFactory($query)
+    {
+        return $query->where('category', 'Factory');
+    }
+
+   
 }
