@@ -41,10 +41,9 @@ class PurchaseController extends Controller
     public function create()
     {
         $products = products::orderby('name', 'asc')->get();
-        $warehouses = warehouses::all();
         $vendors = accounts::vendor()->get();
         $accounts = accounts::business()->get();
-        return view('purchase.create', compact('products', 'warehouses', 'vendors', 'accounts'));
+        return view('purchase.create', compact('products', 'vendors', 'accounts'));
     }
 
     /**
@@ -66,11 +65,8 @@ class PurchaseController extends Controller
                   'vendor_id'        => $request->vendorID,
                   'date'            => $request->date,
                   'notes'           => $request->notes,
-                  'discount'        => $request->discount,
-                  'dc'              => $request->dc,
                   'vendorName'      => $request->vendorName,
                   'payment_status'  => $request->status,
-                  'inv'             => $request->inv,
                   'refID'           => $ref,
                 ]
             );
@@ -95,10 +91,9 @@ class PurchaseController extends Controller
                         'amount'        => $amount,
                         'date'          => $request->date,
                         'refID'         => $ref,
-                        'warehouse_id'   => $request->warehouse[$key],
                     ]
                 );
-                createStock($id, $qty, 0, $request->date, "Purchased Notes: $request->notes", $ref, $request->warehouse[$key]);
+                createStock($id, $qty, 0, $request->date, "Purchased Notes: $request->notes", $ref);
 
                 }
             }
@@ -115,7 +110,6 @@ class PurchaseController extends Controller
             {
                 createTransaction($request->vendorID, $request->date, $net, 0, "Payment of Purchase No. $purchase->id Notes: $request->notes", $ref, 'Purchase');
                 createTransaction($request->accountID, $request->date, 0, $net, "Payment of Purchase No. $purchase->id Notes: $request->notes", $ref, 'Purchase');
-               
             }
             else
             {

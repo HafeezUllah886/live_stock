@@ -42,7 +42,6 @@
                                 <table class="table table-striped table-hover">
                                     <thead>
                                         <th width="30%">Item</th>
-                                        <th width="10%" class="text-center">Warehouse</th>
                                         <th class="text-center">Price</th>
                                         <th class="text-center">Qty</th>
                                         <th class="text-end">Amount</th>
@@ -59,30 +58,7 @@
                                     </tfoot>
                                 </table>
                             </div>
-                            <div class="col-3">
-                                <div class="form-group">
-                                    <label for="comp">Purchase Inv No.</label>
-                                    <input type="text" name="inv" id="inv" class="form-control">
-                                </div>
-                            </div>
-                            <div class="col-3">
-                                <div class="form-group">
-                                    <label for="discount">Discount</label>
-                                    <input type="number" name="discount" oninput="updateTotal()" id="discount" step="any" value="0" class="form-control no_zero">
-                                </div>
-                            </div>
-                            <div class="col-3">
-                                <div class="form-group">
-                                    <label for="dc">Delivery Charges</label>
-                                    <input type="number" name="dc" id="dc" oninput="updateTotal()" min="0" step="any" value="0" class="form-control no_zero">
-                                </div>
-                            </div>
-                            <div class="col-3">
-                                <div class="form-group">
-                                    <label for="net">Net Amount</label>
-                                    <input type="number" name="net" id="net" step="any" readonly value="0" class="form-control">
-                                </div>
-                            </div>
+                           
                             <div class="col-3 mt-2">
                                 <div class="form-group">
                                     <label for="date">Date</label>
@@ -104,22 +80,23 @@
                                     <input type="text" name="vendorName" id="vendorName" class="form-control">
                                 </div>
                             </div>
-                            <div class="col-3 mt-2">
-                                <div class="form-group">
-                                    <label for="account">Account</label>
-                                    <select name="accountID" id="account" class="selectize1">
-                                        @foreach ($accounts as $account)
-                                            <option value="{{ $account->id }}">{{ $account->title }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
+                          
                             <div class="col-3 mt-2">
                                 <div class="form-group">
                                     <label for="status">Payment Status</label>
                                     <select name="status" id="status1" class="form-control">
                                         <option value="paid">Paid</option>
                                         <option value="pending">Pending</option>
+                                    </select>
+                                </div>
+                            </div>
+                              <div class="col-3 mt-2">
+                                <div class="form-group">
+                                    <label for="account">Account</label>
+                                    <select name="accountID" id="account" class="selectize1">
+                                        @foreach ($accounts as $account)
+                                            <option value="{{ $account->id }}">{{ $account->title }}</option>
+                                        @endforeach
                                     </select>
                                 </div>
                             </div>
@@ -168,7 +145,6 @@
 
             },
         });
-        var warehouses = @json($warehouses);
         var existingProducts = [];
 
         function getSingleProduct(id) {
@@ -186,11 +162,6 @@
                         var id = product.id;
                         var html = '<tr id="row_' + id + '">';
                         html += '<td class="no-padding">' + product.name + '</td>';
-                        html += '<td class="no-padding"><select name="warehouse[]" class="form-control text-center no-padding" id="warehouse_' + id + '">';
-                            warehouses.forEach(function(warehouse) {
-                                html += '<option value="' + warehouse.id + '" >' + warehouse.name + '</option>';
-                            });
-                        html += '</select></td>';
                         html += '<td class="no-padding"><input type="number" name="price[]" oninput="updateChanges(' + id + ')" step="any" value="0" min="1" class="form-control text-center no-padding" id="price_' + id + '"></td>';
                         html += '<td class="no-padding"><input type="number" name="qty[]" oninput="updateChanges(' + id + ')" min="0" step="any" value="0" class="form-control text-center no-padding" id="qty_' + id + '"></td>';
                         html += '<td class="no-padding"><input type="number" name="amount[]" min="0.1" readonly required step="any" value="1" class="form-control text-center no-padding" id="amount_' + id + '"></td>';
