@@ -42,6 +42,11 @@ class accounts extends Model
     {
         return $query->where('category', 'Factory');
     }
+    public function scopeButcher($query)
+    {
+        return $query->where('category', 'Butcher');
+    }
+
 
    
 }

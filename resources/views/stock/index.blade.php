@@ -11,7 +11,6 @@
                         <thead>
                             <th>#</th>
                             <th>Product</th>
-                            <th>Category</th>
                             <th>Stock</th>
                             <th>Action</th>
                         </thead>
@@ -20,15 +19,9 @@
                                 @php
                                     $stock = getStock($product->id);
                                 @endphp
-                                @php
-                                $stock = getStock($product->id);
-                            @endphp
-                            @if (request('zero') == 'allowed')
-                                @if ($stock == 0)
-                                    <tr>
+                            <tr>
                                         <td>{{ $key + 1 }}</td>
                                         <td>{{ $product->name }}</td>
-                                        <td>{{ $product->category->name }}</td>
                                         <td>{{ number_format($stock, 2) }}</td>
                                         <td>
                                             <button class="btn btn-info" onclick="ViewDetails({{ $product->id }})">
@@ -36,51 +29,6 @@
                                             </button>
                                         </td>
                                     </tr>
-                                    
-                                @endif
-                            @elseif (request('zero') == 'above_zero')
-                                @if ($stock > 0)
-                                    <tr>
-                                        <td>{{ $key + 1 }}</td>
-                                        <td>{{ $product->name }}</td>
-                                        <td>{{ $product->category->name }}</td>
-                                        <td>{{ number_format($stock, 2) }}</td>
-                                        <td>
-                                            <button class="btn btn-info" onclick="ViewDetails({{ $product->id }})">
-                                                Details
-                                            </button>
-                                        </td>
-                                    </tr>
-                                @endif
-                                @elseif (request('zero') == 'below_zero')
-                                @if ($stock < 0)
-                                    <tr>
-                                        <td>{{ $key + 1 }}</td>
-                                        <td>{{ $product->name }}</td>
-                                        <td>{{ $product->category->name }}</td>
-                                        <td>{{ number_format($stock, 2) }}</td>
-                                        <td>
-                                            <button class="btn btn-info" onclick="ViewDetails({{ $product->id }})">
-                                                Details
-                                            </button>
-                                        </td>
-                                    </tr>
-                                @endif
-                            @else
-                                @if ($stock != 0)
-                                    <tr>
-                                        <td>{{ $key + 1 }}</td>
-                                        <td>{{ $product->name }}</td>
-                                        <td>{{ $product->category->name }}</td>
-                                        <td>{{ number_format($stock, 2) }}</td>
-                                        <td>
-                                            <button class="btn btn-info" onclick="ViewDetails({{ $product->id }})">
-                                                Details
-                                            </button>
-                                        </td>
-                                    </tr>
-                                @endif
-                            @endif
                             @endforeach
                         </tbody>
                     </table>
@@ -114,15 +62,7 @@
                                     aria-describedby="inputGroup-sizing-default">
                             </div>
                         </div>
-                        <div class="form-group mt-2">
-                            <label for="warehouse">Warehouse</label>
-                            <select name="warehouse" class="form-control" id="warehouse">
-                                <option value="all">All</option>
-                                @foreach ($warehouses as $warehouse)
-                                    <option value="{{ $warehouse->id }}">{{ $warehouse->name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
+                        
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
@@ -162,13 +102,11 @@
 
         $("#viewBtn").on("click", function() {
             var productID = $("#productID").val();
-            var warehouse = $("#warehouse").find(":selected").val();
             var from = $("#from").val();
             var to = $("#to").val();
             var url =
-                "{{ route('stockDetails', ['id' => ':productID', 'warehouse' => ':warehouse', 'from' => ':from', 'to' => ':to']) }}"
+                "{{ route('stockDetails', ['id' => ':productID', 'from' => ':from', 'to' => ':to']) }}"
                 .replace(':productID', productID)
-                .replace(':warehouse', warehouse)
                 .replace(':from', from)
                 .replace(':to', to);
             window.open(url, "_blank", "width=1000,height=800");

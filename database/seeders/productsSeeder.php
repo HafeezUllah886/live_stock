@@ -16,8 +16,8 @@ class productsSeeder extends Seeder
     public function run(): void
     {
         $data = [
+             ['name' => "Sheep", 'status' => 'Active'],
             ['name' => "Cattle", 'status' => 'Active'],
-            ['name' => "Sheep", 'status' => 'Active'],
             ['name' => "Goat", 'status' => 'Active'],
            
         ];

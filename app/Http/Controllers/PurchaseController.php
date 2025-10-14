@@ -29,10 +29,12 @@ class PurchaseController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $purchases = purchase::orderby('id', 'desc')->get();
-        return view('purchase.index', compact('purchases'));
+        $from = $request->from ?? firstDayOfMonth();
+        $to = $request->to ?? date('Y-m-d');
+        $purchases = purchase::whereBetween('date', [$from, $to])->get();
+        return view('purchase.index', compact('purchases', 'from', 'to'));
     }
 
     /**
@@ -108,7 +110,7 @@ class PurchaseController extends Controller
 
             if($request->status == 'paid')
             {
-                createTransaction($request->vendorID, $request->date, $net, 0, "Payment of Purchase No. $purchase->id Notes: $request->notes", $ref, 'Purchase');
+                createTransaction($request->vendorID, $request->date, $net, $net, "Payment of Purchase No. $purchase->id Notes: $request->notes", $ref, 'Purchase');
                 createTransaction($request->accountID, $request->date, 0, $net, "Payment of Purchase No. $purchase->id Notes: $request->notes", $ref, 'Purchase');
             }
             else
@@ -135,13 +137,7 @@ class PurchaseController extends Controller
         return view('purchase.view', compact('purchase'));
     }
 
-    public function pdf($id)
-    {
-        $purchase = purchase::find($id);
-        $pdf = Pdf::loadview('purchase.pdf', compact('purchase'));
-
-        return $pdf->download("Purchase Vouchar No. $purchase->id.pdf");
-    }
+  
 
     /**
      * Show the form for editing the specified resource.
@@ -149,12 +145,12 @@ class PurchaseController extends Controller
     public function edit(purchase $purchase)
     {
         $products = products::orderby('name', 'asc')->get();
-        $warehouses = warehouses::all();
+     
         $vendors = accounts::vendor()->get();
         $accounts = accounts::business()->get();
-        $cats = categories::orderBy('name', 'asc')->get();
+    
 
-        return view('purchase.edit', compact('products', 'warehouses', 'vendors', 'accounts', 'purchase', 'cats'));
+        return view('purchase.edit', compact('products', 'vendors', 'accounts', 'purchase'));
     }
 
     /**
@@ -169,11 +165,7 @@ class PurchaseController extends Controller
                 throw new Exception('Please Select Atleast One Product');
             }
             DB::beginTransaction();
-            foreach($purchase->payments as $payment)
-            {
-                transactions::where('refID', $payment->refID)->delete();
-                $payment->delete();
-            }
+          
             foreach($purchase->details as $product)
             {
                 stock::where('refID', $product->refID)->delete();
@@ -183,14 +175,11 @@ class PurchaseController extends Controller
 
             $purchase->update(
                 [
-                'vendorID'        => $request->vendorID,
+              'vendor_id'        => $request->vendorID,
                   'date'            => $request->date,
                   'notes'           => $request->notes,
-                  'discount'        => $request->discount,
-                  'dc'              => $request->dc,
                   'vendorName'      => $request->vendorName,
                   'payment_status'  => $request->status,
-                  'inv'             => $request->inv,
                   ]
             );
 
@@ -203,77 +192,42 @@ class PurchaseController extends Controller
                 if($request->qty[$key] > 0)
                 {
                     $qty = $request->qty[$key];
-                $pprice = $request->pprice[$key];
+              
                 $price = $request->price[$key];
-                $amount = $pprice * $qty;
+                $amount = $price * $qty;
                 $total += $amount;
 
                 purchase_details::create(
                     [
-                        'purchaseID'    => $purchase->id,
-                        'productID'     => $id,
-                        'pprice'        => $pprice,
+                        'purchase_id'    => $purchase->id,
+                        'product_id'     => $id,
                         'price'         => $price,
                         'qty'           => $qty,
                         'amount'        => $amount,
                         'date'          => $request->date,
                         'refID'         => $ref,
-                        'warehouseID'   => $request->warehouse[$key],
                     ]
                 );
-                createStock($id, $qty, 0, $request->date, "Purchased", $ref, $request->warehouse[$key]);
+                createStock($id, $qty, 0, $request->date, "Purchased", $ref);
 
                 }
             }
-           
-             $net = ($total + $request->dc) - $request->discount;
         
             $purchase->update(
                 [
 
-                    'total'       => $net,
+                    'total'       => $total,
                 ]
             );
 
-            if($request->status == 'paid')
-            {
-                purchase_payments::create(
-                    [
-                        'purchaseID'    => $purchase->id,
-                        'accountID'     => $request->accountID,
-                        'date'          => $request->date,
-                        'amount'        => $net,
-                        'notes'         => "Full Paid",
-                        'refID'         => $ref,
-                    ]
-                );
-                createTransaction($request->accountID, $request->date, 0, $net, "Payment of Purchase No. $purchase->id Notes: $request->notes", $ref, 'Purchase');
-                createTransaction($request->vendorID, $request->date, $net, $net, "Payment of Purchase No. $purchase->id Notes: $request->notes", $ref, 'Purchase');
-            }
-            elseif($request->status == 'advanced')
-            {
-                $balance = getAccountBalance($request->vendorID);
-                if($net > $balance)
-                {
-                    createTransaction($request->vendorID, $request->date, 0, $net, "Pending Amount of Purchase No. $purchase->id Notes: $request->notes", $ref, 'Purchase');
-                    DB::commit();
-                    return back()->with('success', "Purchase Created: Balance was not enough moved to unpaid / pending");
-                }
-                purchase_payments::create(
-                    [
-                        'purchaseID'    => $purchase->id,
-                        'accountID'     => $request->accountID,
-                        'date'          => $request->date,
-                        'amount'        => $net,
-                        'notes'         => "Full Paid",
-                        'refID'         => $ref,
-                    ]
-                );
-                createTransaction($request->vendorID, $request->date, 0, $net, "Purchase No. $purchase->id Notes: $request->notes", $ref, 'Purchase');
+             if($request->status == 'paid')
+            {   
+                createTransaction($request->vendorID, $request->date, $total, $total, "Payment of Purchase No. $purchase->id Notes: $request->notes", $ref, 'Purchase');
+                createTransaction($request->accountID, $request->date, 0, $total, "Payment of Purchase No. $purchase->id Notes: $request->notes", $ref, 'Purchase');
             }
             else
             {
-                createTransaction($request->vendorID, $request->date, 0, $net, "Pending Amount of Purchase No. $purchase->id Notes: $request->notes", $ref, 'Purchase');
+                createTransaction($request->vendorID, $request->date, 0, $total, "Pending Amount of Purchase No. $purchase->id Notes: $request->notes", $ref, 'Purchase');
             }
             DB::commit();
             session()->forget('confirmed_password');
@@ -296,11 +250,6 @@ class PurchaseController extends Controller
         {
             DB::beginTransaction();
             $purchase = purchase::find($id);
-            foreach($purchase->payments as $payment)
-            {
-                transactions::where('refID', $payment->refID)->delete();
-                $payment->delete();
-            }
             foreach($purchase->details as $product)
             {
                 stock::where('refID', $product->refID)->delete();

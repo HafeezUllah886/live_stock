@@ -26,7 +26,7 @@
                                         class="form-control">
                                 </div>
                             </div>
-                            <div class="col-md-6 mt-2">
+                            <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="category">Category</label>
                                     <select name="category" id="category" class="form-control" onchange="checkCat()">
@@ -35,6 +35,7 @@
                                         <option value="Vendor">Vendor</option>
                                         <option value="Factory">Factory</option>
                                         <option value="Transporter">Transporter</option>
+                                        <option value="Butcher">Butcher</option>
                                     </select>
                                 </div>
                             </div>

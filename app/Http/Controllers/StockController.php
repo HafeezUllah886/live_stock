@@ -16,8 +16,8 @@ class StockController extends Controller
     public function index()
     {
         $products = products::all();
-        $warehouses = warehouses::all();
-        return view('stock.index', compact('products', 'warehouses'));
+       
+        return view('stock.index', compact('products'));
     }
 
     /**
@@ -39,32 +39,19 @@ class StockController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show($id, $warehouse, $from, $to)
+    public function show($id, $from, $to)
     {
         $product = products::find($id);
 
-        if($warehouse == 'all')
-        {
-            $stocks = stock::where('productID', $id)->whereBetween('date', [$from, $to])->get();
+      
+            $stocks = stock::where('product_id', $id)->whereBetween('date', [$from, $to])->get();
 
-            $pre_cr = stock::where('productID', $id)->whereDate('date', '<', $from)->sum('cr');
-            $pre_db = stock::where('productID', $id)->whereDate('date', '<', $from)->sum('db');
+            $pre_cr = stock::where('product_id', $id)->whereDate('date', '<', $from)->sum('cr');
+            $pre_db = stock::where('product_id', $id)->whereDate('date', '<', $from)->sum('db');
 
-            $cur_cr = stock::where('productID', $id)->sum('cr');
-            $cur_db = stock::where('productID', $id)->sum('db');
-        }
-        else
-        {
-            $stocks = stock::where('productID', $id)->whereBetween('date', [$from, $to])->where('warehouseID', $warehouse)->get();
-
-            $pre_cr = stock::where('productID', $id)->whereDate('date', '<', $from)->where('warehouseID', $warehouse)->sum('cr');
-            $pre_db = stock::where('productID', $id)->whereDate('date', '<', $from)->where('warehouseID', $warehouse)->sum('db');
-
-            $cur_cr = stock::where('productID', $id)->where('warehouseID', $warehouse)->sum('cr');
-            $cur_db = stock::where('productID', $id)->where('warehouseID', $warehouse)->sum('db');
-        }
-
-
+            $cur_cr = stock::where('product_id', $id)->sum('cr');
+            $cur_db = stock::where('product_id', $id)->sum('db');
+       
         $pre_balance = $pre_cr - $pre_db;
         $cur_balance = $cur_cr - $cur_db;
 

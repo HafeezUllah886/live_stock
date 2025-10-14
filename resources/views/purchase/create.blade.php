@@ -8,7 +8,6 @@
                         <div class="card-header">
                             <div class="row">
                                 <div class="col-6"><h3> Create Purchase </h3></div>
-
                                 <div class="col-6 d-flex flex-row-reverse">
                                     <a href="{{ route('purchase.index') }}" class="btn btn-danger">Close</a>
                                 </div>
@@ -50,7 +49,7 @@
                                     <tbody id="products_list"></tbody>
                                     <tfoot>
                                         <tr>
-                                            <th colspan="3" class="text-end">Total</th>
+                                            <th colspan="2" class="text-end">Total</th>
                                             <th class="text-center" id="totalQty">0.00</th>
                                             <th class="text-end" id="totalAmount">0.00</th>
                                             <th></th>
@@ -195,14 +194,6 @@
 
             $("#totalAmount").html(total.toFixed(2));
 
-
-            var discount = parseFloat($("#discount").val());
-            var dc = parseFloat($("#dc").val());
-
-            var net = (total + dc) - discount;
-
-            $("#net").val(net.toFixed(2));
-
             var count = $("[id^='row_']").length;
             var numQty = 0;
             $("input[id^='qty_']").each(function() {
@@ -227,7 +218,7 @@
     function checkAccount()
     {
         var id = $("#vendorID").find(":selected").val();
-        if(id == 3)
+        if(id == 2)
         {
             $(".vendorName").removeClass("d-none");
             $('#status1 option').each(function() {
@@ -255,54 +246,5 @@
     $("#vendorID").on("change", function(){
         checkAccount();
     });
-
-    function generateCode(){
-
-$.ajax({
-    url: "{{ url('product/generateCode') }}",
-    method: "GET",
-    success: function(code) {
-
-        $("#code1").val(code);
-    }
-        });
-
-}
-$("#code_form").on("submit", function(e)
-    {
-        e.preventDefault();
-        var code = $("#code").val();
-        $("#code").val('');
-        $.ajax({
-                url: "{{ url('product/searchByCode/') }}/" + code,
-                method: "GET",
-                success: function(response) {
-                    if(response == "Not Found")
-                    {
-                        Toastify({
-                        text: "Product Not Found",
-                        className: "info",
-                        close: true,
-                        gravity: "top", // `top` or `bottom`
-                        position: "center", // `left`, `center` or `right`
-                        stopOnFocus: true, // Prevents dismissing of toast on hover
-                        style: {
-                            background: "linear-gradient(to right, #FF5733, #E70000)",
-                        }
-                        }).showToast();
-                    }
-                    else
-                    {
-                        getSingleProduct(response);
-                    }
-                }
-            }
-        );
-    });
     </script>
-     @foreach ($products as $product)
-     @if($product->isDefault == "Yes")
-     <script>getSingleProduct({{$product->id}});</script>
-     @endif
-     @endforeach
 @endsection

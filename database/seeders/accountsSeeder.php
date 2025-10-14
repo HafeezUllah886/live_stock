@@ -32,5 +32,22 @@ class accountsSeeder extends Seeder
             'status'    => "Active",
         ]);
 
+        accounts::create([
+            'title'     => "Walk-In Factory",
+            'category'  => "Factory",
+            'status'    => "Active",
+        ]);
+
+        accounts::create([
+            'title'     => "Walk-In Transporter",
+            'category'  => "Transporter",
+            'status'    => "Active",
+        ]);
+
+        accounts::create([
+            'title'     => "Walk-In Butcher",
+            'category'  => "Butcher",
+            'status'    => "Active",
+        ]);
     }
 }

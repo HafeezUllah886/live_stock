@@ -4,7 +4,7 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-header d-flex justify-content-between">
-                    <h3>Purchases</h3>
+                    <h3>Slaughtering</h3>
 
                 </div>
                 <div class="card-body">
@@ -41,22 +41,25 @@
                     <table class="table" id="buttons-datatables">
                         <thead>
                             <th>#</th>
-                            <th>Inv #</th>
-                            <th>Vendor</th>
-                            <th>Date</th>
-                            <th>Amount</th>
+                            <th>Ref #</th>
+                             <th>Date</th>
+                            <th>Product</th>
+                            <th>Qty</th>
+                            <th>Customer</th>
+                            <th>Factory</th>
                             <th>Action</th>
                         </thead>
                         <tbody>
-                            @foreach ($purchases as $key => $purchase)
+                            @foreach ($slaughterings as $key => $slaughter)
                               
                                 <tr>
                                     <td>{{ $key + 1 }}</td>
-                                    <td>{{ $purchase->inv ?? "-" }}</td>
-                                    <td>{{ $purchase->vendorID != 3 ? $purchase->vendor->title : $purchase->vendorName . '(Walk-in)' }}</td>
-                                    <td>{{ date('d M Y', strtotime($purchase->date)) }}</td>
-                                    <td>{{ number_format($purchase->total) }}</td>
-                                 
+                                    <td>{{ $slaughter->refID }}</td>
+                                    <td>{{ date('d M Y', strtotime($slaughter->date)) }}</td>
+                                    <td>{{ $slaughter->product->name }}</td>
+                                    <td>{{ $slaughter->qty }}</td>
+                                    <td>{{ $slaughter->customer->name }}</td>
+                                    <td>{{ $slaughter->factory->name }}</td>                                 
                                     <td>
                                         <div class="dropdown">
                                             <button class="btn btn-soft-secondary btn-sm dropdown" type="button"
@@ -65,21 +68,21 @@
                                             </button>
                                             <ul class="dropdown-menu dropdown-menu-end">
                                                 <li>
-                                                    <button class="dropdown-item" onclick="newWindow('{{route('purchase.show', $purchase->id)}}')"
+                                                    <button class="dropdown-item" onclick="newWindow('{{route('slaughter.show', $slaughter->id)}}')"
                                                         onclick=""><i
                                                             class="ri-eye-fill align-bottom me-2 text-muted"></i>
                                                         View
                                                     </button>
                                                 </li>
                                               <li>
-                                                    <a class="dropdown-item" href="{{route('purchase.edit', $purchase->id)}}">
+                                                    <a class="dropdown-item" href="{{route('slaughter.edit', $slaughter->id)}}">
                                                         <i class="ri-pencil-fill align-bottom me-2 text-muted"></i>
                                                         Edit
                                                     </a>
                                                 </li>
                                               
                                                 <li>
-                                                    <a class="dropdown-item text-danger" href="{{route('purchases.delete', $purchase->id)}}">
+                                                    <a class="dropdown-item text-danger" href="{{route('slaughter.delete', $slaughter->id)}}">
                                                         <i class="ri-delete-bin-2-fill align-bottom me-2 text-danger"></i>
                                                         Delete
                                                     </a>

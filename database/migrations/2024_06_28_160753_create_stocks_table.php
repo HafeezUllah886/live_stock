@@ -19,7 +19,6 @@ return new class extends Migration
             $table->float('db')->default(0);
             $table->text('notes')->nullable();
             $table->bigInteger('refID');
-            $table->foreignId('warehouse_id')->constrained('warehouses', 'id');
             $table->timestamps();
         });
     }

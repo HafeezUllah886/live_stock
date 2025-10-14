@@ -82,6 +82,41 @@
                     </div>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link menu-link" href="#slaughter" data-bs-toggle="collapse" role="button"
+                        aria-expanded="false" aria-controls="slaughter">
+                        <i class="ri-knife-line"></i> <span data-key="t-forms">Slaughtering</span>
+                    </a>
+                    <div class="collapse menu-dropdown" id="slaughter">
+                        <ul class="nav nav-sm flex-column">
+                            <li class="nav-item">
+                                <a href="{{ route('slaughter.create') }}" class="nav-link"
+                                    data-key="t-basic-elements">Create Slaughter</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('slaughter.index') }}" class="nav-link"
+                                    data-key="t-form-select">
+                                    History </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link menu-link" href="#stock" data-bs-toggle="collapse" role="button"
+                        aria-expanded="false" aria-controls="sidebarApps">
+                        <i class="ri-stack-line"></i><span data-key="t-apps">Stocks</span>
+                    </a>
+                    <div class="collapse menu-dropdown" id="stock">
+                        <ul class="nav nav-sm flex-column">
+                            <li class="nav-item">
+                                <a href="{{ route('product_stock.index') }}" class="nav-link" data-key="t-chat">Products Stock</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('stockAdjustments.index') }}" class="nav-link" data-key="t-chat">Stock Adjustment</a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link menu-link" href="#sidebarFinance" data-bs-toggle="collapse" role="button"
                         aria-expanded="false" aria-controls="sidebarFinance">
                         <i class="ri-file-list-3-line"></i> <span data-key="t-forms">Finance</span>
@@ -128,20 +163,7 @@
                         </ul>
                     </div>
                 </li>
-                {{-- <li class="nav-item">
-                    <a class="nav-link menu-link" href="#warehouses" data-bs-toggle="collapse" role="button"
-                        aria-expanded="false" aria-controls="sidebarApps">
-                        <i class="ri-apps-2-line"></i> <span data-key="t-apps">Warehouses</span>
-                    </a>
-                    <div class="collapse menu-dropdown" id="warehouses">
-                        <ul class="nav nav-sm flex-column">
-                            <li class="nav-item">
-                                <a href="{{ route('warehouses.index') }}" class="nav-link" data-key="t-chat">Warehouses
-                                    List </a>
-                            </li>
-                        </ul>
-                    </div>
-                </li> --}}
+               
                 <li class="nav-item">
                     <a class="nav-link menu-link" href="#products" data-bs-toggle="collapse" role="button"
                         aria-expanded="false" aria-controls="sidebarApps">
