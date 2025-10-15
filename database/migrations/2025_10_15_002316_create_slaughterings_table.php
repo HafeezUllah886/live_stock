@@ -27,7 +27,10 @@ return new class extends Migration
             $table->float('rejected_amount')->nullable();
             $table->foreignId('butcher_id')->constrained('accounts')->cascadeOnDelete();
             $table->float('ober_price')->nullable();
+            $table->float('ober_qty')->nullable();
+            $table->float('ober_amount')->nullable();
             $table->foreignId('Ober_id')->constrained('accounts')->cascadeOnDelete();
+            $table->float('grand_total')->nullable();
             $table->date('date');
             $table->text('notes')->nullable();
             $table->bigInteger('refID');

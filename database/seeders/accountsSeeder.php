@@ -33,19 +33,19 @@ class accountsSeeder extends Seeder
         ]);
 
         accounts::create([
-            'title'     => "Walk-In Factory",
+            'title'     => "Test Factory",
             'category'  => "Factory",
             'status'    => "Active",
         ]);
 
         accounts::create([
-            'title'     => "Walk-In Transporter",
+            'title'     => "Test Transporter",
             'category'  => "Transporter",
             'status'    => "Active",
         ]);
 
         accounts::create([
-            'title'     => "Walk-In Butcher",
+            'title'     => "Test Butcher",
             'category'  => "Butcher",
             'status'    => "Active",
         ]);

@@ -58,8 +58,8 @@
                                     <td>{{ date('d M Y', strtotime($slaughter->date)) }}</td>
                                     <td>{{ $slaughter->product->name }}</td>
                                     <td>{{ $slaughter->qty }}</td>
-                                    <td>{{ $slaughter->customer->name }}</td>
-                                    <td>{{ $slaughter->factory->name }}</td>                                 
+                                    <td>{{ $slaughter->customer->title }}</td>
+                                    <td>{{ $slaughter->factory->title }}</td>                                 
                                     <td>
                                         <div class="dropdown">
                                             <button class="btn btn-soft-secondary btn-sm dropdown" type="button"
@@ -81,12 +81,12 @@
                                                     </a>
                                                 </li>
                                               
-                                                <li>
+                                              {{--   <li>
                                                     <a class="dropdown-item text-danger" href="{{route('slaughter.delete', $slaughter->id)}}">
                                                         <i class="ri-delete-bin-2-fill align-bottom me-2 text-danger"></i>
                                                         Delete
                                                     </a>
-                                                </li> 
+                                                </li>  --}}
                                             </ul>
                                         </div>
                                     </td>
