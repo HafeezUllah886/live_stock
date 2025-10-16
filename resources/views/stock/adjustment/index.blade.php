@@ -13,7 +13,6 @@
                             <th>#</th>
                             <th>Ref #</th>
                             <th>Product</th>
-                            <th>Warehouse</th>
                             <th>Date</th>
                             <th>Type</th>
                             <th>Qty</th>
@@ -26,7 +25,6 @@
                                     <td>{{ $key + 1 }}</td>
                                     <td>{{ $item->refID }}</td>
                                     <td>{{ $item->product->name }}</td>
-                                    <td>{{ $item->warehouse->name }}</td>
                                     <td>{{ date('d M Y', strtotime($item->date)) }}</td>
                                     <td>
                                         <span class="badge {{ $item->type == 'Stock-In' ? 'bg-info' : 'bg-warning' }}">{{ $item->type }}</span>
@@ -68,14 +66,6 @@
                             </select>
                         </div>
                         <div class="form-group mt-2">
-                            <label for="warehouse">Unit</label>
-                            <select name="warehouseID" id="warehouse" class="form-control">
-                                @foreach ($warehouses as $warehouse)
-                                    <option value="{{$warehouse->id}}">{{$warehouse->name}}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="form-group">
                             <label for="qty">Qty</label>
                             <input type="number" name="qty" required id="qty"
                                 class="form-control">
