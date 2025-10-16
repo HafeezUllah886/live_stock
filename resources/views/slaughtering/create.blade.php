@@ -33,7 +33,7 @@
                                     <label for="factory_id">Factory</label>
                                     <select name="factory_id" id="factory_id" class="form-control">
                                         @foreach ($factories as $factory)
-                                            <option value="{{ $factory->id }}">{{ $factory->title }}</option>
+                                            <option value="{{ $factory->id }}">{{ $factory->title }} ({{ $factory->category }})</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -43,7 +43,7 @@
                                     <label for="customer_id">Customer</label>
                                     <select name="customer_id" id="customer_id" class="form-control">
                                         @foreach ($customers as $customer)
-                                            <option value="{{ $customer->id }}">{{ $customer->title }}</option>
+                                            <option value="{{ $customer->id }}">{{ $customer->title }} ({{ $customer->category }})</option>
                                         @endforeach
                                     </select>
                                 </div>

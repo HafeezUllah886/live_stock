@@ -6,7 +6,7 @@
                     <div class="row">
                         <div class="col-lg-12">
                             <div class="hstack gap-2 justify-content-end d-print-none p-2 mt-4">
-                                <a href="{{ route('purchase.create') }}" class="btn btn-primary ml-4">Create New</a>
+                                <a href="{{ route('slaughter.create') }}" class="btn btn-primary ml-4">Create New</a>
                                 <a href="javascript:window.print()" class="btn btn-success ml-4"><i class="ri-printer-line mr-4"></i> Print</a>
                             </div>
                             <div class="card-header border-bottom-dashed p-4">

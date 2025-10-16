@@ -47,6 +47,15 @@ class accounts extends Model
         return $query->where('category', 'Butcher');
     }
 
+    public function scopeNotBusiness($query)
+    {
+        return $query->whereNot('category', 'Business');
+    }
+
+    public function scopeCustomerAndFactory($query)
+    {
+        return $query->where('category', 'Customer')->orWhere('category', 'Factory');
+    }
 
    
 }

@@ -1,14 +1,5 @@
 @extends('layout.popups')
 @section('content')
-<script>
-    var existingProducts = [];
-    @foreach ($purchase->details as $product)
-        @php
-            $productID = $product->productID;
-        @endphp
-        existingProducts.push({{$productID}});
-    @endforeach
-</script>
     <div class="row justify-content-center">
         <div class="col-12">
             <div class="card" id="demo">
@@ -16,144 +7,186 @@
                     <div class="col-12">
                         <div class="card-header">
                             <div class="row">
-                                <div class="col-6"><h3> Edit Purchase </h3></div>
+                                <div class="col-6">
+                                    <h3> Edit Slaughtering </h3>
+                                </div>
                                 <div class="col-6 d-flex flex-row-reverse">
-                                    <a href="{{ route('purchase.index') }}" class="btn btn-danger">Close</a>
+                                    <a href="{{ route('slaughter.index') }}" class="btn btn-danger">Close</a>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div><!--end row-->
                 <div class="card-body">
-
-                        <div class="row">
-                            <div class="row">
-                                <div class="col-12">
-                                    <div class="form-group">
-                                        <label for="product">Product</label>
-                                        <select name="product" class="selectize" id="product">
-                                            <option value=""></option>
-                                            @foreach ($products as $product)
-                                                <option value="{{ $product->id }}">{{ $product->name }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
+                    <form action="{{ route('slaughter.update', $slaughter->id) }}" method="post">
+                        @csrf
+                        @method('PUT')
+                        <div class="row mb-3">
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="date">Date</label>
+                                    <input type="date" name="date" value="{{ $slaughter->date }}" id="date"
+                                        class="form-control">
                                 </div>
-                               
+                            </div>
+                            <div class="col-md-3 mt-2 mt-md-0">
+                                <div class="form-group">
+                                    <label for="factory_id">Factory</label>
+                                    <select name="factory_id" id="factory_id" class="form-control">
+                                        @foreach ($factories as $factory)
+                                            <option value="{{ $factory->id }}" {{ $slaughter->factory_id == $factory->id ? 'selected' : '' }}>{{ $factory->title }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mt-2 mt-md-0">
+                                <div class="form-group">
+                                    <label for="customer_id">Customer</label>
+                                    <select name="customer_id" id="customer_id" class="form-control">
+                                        @foreach ($customers as $customer)
+                                            <option value="{{ $customer->id }}" {{ $slaughter->customer_id == $customer->id ? 'selected' : '' }}>{{ $customer->title }} ({{ $customer->category }})</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mt-2 mt-md-0">
+                                <div class="form-group">
+                                    <label for="product_id">Product</label>
+                                    <select name="product_id" id="product_id" class="form-control">
+                                        @foreach ($products as $product)
+                                            <option value="{{ $product->id }}" {{ $slaughter->product_id == $product->id ? 'selected' : '' }}>{{ $product->name }} ({{ $product->category }})</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <h5>Slaughter Details</h5>
+                        <div class="row mb-3">
+                            <div class="col-md-3 mt-2 mt-md-0">
+                               <div class="row">
+                                 <div class="col-6 form-group">
+                                    <label for="qty">Live Qty</label>
+                                    <input type="number" name="qty" oninput="calculateSlaughterAmount()" id="qty" class="form-control" value="{{ $slaughter->qty }}">
+                                </div>
+                                <div class="col-6 form-group">
+                                    <label for="weight">Meat Weight</label>
+                                    <input type="number" name="weight" step="any" oninput="calculateTotal()" id="weight" class="form-control" value="{{ $slaughter->weight }}">
+                                </div>
+                               </div>
+                            </div>
+                            <div class="col-md-3 mt-2 mt-md-0">
+                                <div class="form-group">
+                                    <label for="price">Price per Kg</label>
+                                    <input type="number" name="price" id="price" oninput="calculateTotal()" class="form-control" value="{{ $slaughter->price }}">
+                                </div>
+                            </div>
+                            <div class="col-md-3 mt-2 mt-md-0">
+                                <div class="form-group">
+                                    <label for="total">Total</label>
+                                    <input type="number" name="total" disabled id="total" class="form-control" value="{{ $slaughter->price * $slaughter->weight }}">
+                                </div>
+                            </div>
+                             <div class="col-md-3 mt-2 mt-md-0">
+                                <label for="slaughter_charges">Slaughtering Charges</label>
+                                <div class="input-group">
+                                <input type="number" name="slaughter_charges" id="slaughter_charges" oninput="calculateSlaughterAmount()" class="form-control" value="{{ $slaughter->slaughtering_charges }}">
+                                <input type="number" name="slaughter_amount" disabled id="slaughter_amount" class="form-control" value="{{ $slaughter->slaughtering_amount }}">
+                                </div>
+                            </div>
+                        </div>
+                        <h5>Rejected Details</h5>
+                        <div class="row mb-3">
+                            <div class="col-md-3 mt-2 mt-md-0">
+                                <div class="form-group">
+                                    <label for="rejected_weight">Weight</label>
+                                    <input type="number" name="rejected_weight" oninput="calculateRejectedTotal()" step="any" id="rejected_weight" value="{{ $slaughter->rejected_weight }}"
+                                        class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-md-3 mt-2 mt-md-0">
+                                <div class="form-group">
+                                    <label for="rejected_price">Price per Kg</label>
+                                    <input type="number" name="rejected_price" oninput="calculateRejectedTotal()" id="rejected_price" class="form-control" value="{{ $slaughter->rejected_price }}">
+                                </div>
+                            </div>
+                            <div class="col-md-3 mt-2 mt-md-0">
+                                <div class="form-group">
+                                    <label for="rejected_total">Total</label>
+                                    <input type="number" name="rejected_total" disabled id="rejected_total" class="form-control" value="{{ $slaughter->rejected_amount }}">
+                                </div>
+                            </div>
+                            <div class="col-md-3 mt-2 mt-md-0">
+                                <div class="form-group">
+                                    <label for="butcher">Butcher</label>
+                                    <select name="butcher_id" id="butcher_id" class="form-control">
+                                        @foreach ($butchers as $butcher)
+                                            <option value="{{ $butcher->id }}" {{ $slaughter->butcher_id == $butcher->id ? 'selected' : '' }}>{{ $butcher->title }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <h5>Ober Details</h5>
+                        <div class="row mb-3">
+                            <div class="col-md-3 mt-2 mt-md-0">
+                                <div class="form-group">
+                                    <label for="ober_qty">Qty</label>
+                                    <input type="number" name="ober_qty" oninput="calculateOberTotal()" value="{{ $slaughter->ober_qty }}" id="ober_qty" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-md-3 mt-2 mt-md-0">
+                                <div class="form-group">
+                                    <label for="ober_price">Price per Kg</label>
+                                    <input type="number" name="ober_price" oninput="calculateOberTotal()" value="{{ $slaughter->ober_price }}" id="ober_price" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-md-3 mt-2 mt-md-0">
+                                <div class="form-group">
+                                    <label for="ober_total">Total</label>
+                                    <input type="number" name="ober_total" disabled id="ober_total" class="form-control" value="{{ $slaughter->ober_amount }}">
+                                </div>
+                            </div>
+                            <div class="col-md-3 mt-2 mt-md-0">
+                                <div class="form-group">
+                                    <label for="ober_customer">Buyer</label>
+                                    <select name="ober_customer_id" id="ober_customer_id" class="form-control">
+                                        @foreach ($butchers as $butcher)
+                                            <option value="{{ $butcher->id }}" {{ $slaughter->ober_customer_id == $butcher->id ? 'selected' : '' }}>{{ $butcher->title }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="row">
+                            <div class="col-md-10">
+                                <div class="form-group">
+                                    <label for="notes">Notes</label>
+                                    <textarea name="notes" id="notes" class="form-control">{{ $slaughter->notes }}</textarea>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label for="grand_total">Grand Total</label>
+                                    <input type="number" name="grand_total" disabled id="grand_total" class="form-control" value="{{ $slaughter->grand_total }}">
+                                </div>
                             </div>
                         </div>
                         <div class="row">
-                            <form action="{{ route('purchase.update', $purchase->id) }}" method="post">
-                                @csrf
-                                @method("PUT")
-                                <div class="col-12">
-                                    <div class="row">
-                                        <div class="col-12">
-                                            <table class="table table-striped table-hover">
-                                                <thead>
-                                                    <th width="30%">Item</th>
-                                                    <th class="text-center">Price</th>
-                                                    <th class="text-center">Qty</th>
-                                                    <th class="text-end">Amount</th>
-                                                    <th></th>
-                                                </thead>
-                                                <tbody id="products_list">
-                                                    @foreach ($purchase->details as $product)
-                                                    @php
-                                                        $id = $product->product->id;
-                                                    @endphp
-                                                    <tr id="row_{{$id}}">
-                                                        <td class="no-padding">{{$product->product->name}}</td>
-                                                       <td class="no-padding"><input type="number" name="price[]" required step="any" value="{{$product->price}}" min="0" class="form-control text-center no-padding" id="price_{{$id}}"></td>
-                                                        <td class="no-padding"><input type="number" name="qty[]" oninput="updateChanges({{$id}})" min="0" required step="any" value="{{$product->qty}}" class="form-control text-center no-padding" id="qty_{{$id}}"></td>
-                                                        <td class="no-padding"><input type="number" name="amount[]" min="0.1" readonly required step="any" value="{{$product->amount}}" class="form-control text-center no-padding" id="amount_{{$id}}"></td>
-                                                        <td class="no-padding"> <span class="btn btn-sm btn-danger" onclick="deleteRow({{$id}})">X</span> </td>
-                                                        <input type="hidden" name="id[]" value="{{$id}}">
-                                                    </tr>
-                                                    @endforeach
-                                                </tbody>
-                                                <tfoot>
-                                                    <tr>
-                                                        <th colspan="2" class="text-end">Total</th>
-                                                        <th class="text-center" id="totalQty">0.00</th>
-                                                        <th class="text-end" id="totalAmount">0.00</th>
-                                                        <th></th>
-                                                    </tr>
-                                                </tfoot>
-                                            </table>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-12">
-                                                <div class="row">
-                                                    <div class="col-3 mt-2">
-                                                        <div class="form-group">
-                                                            <label for="date">Date</label>
-                                                            <input type="date" name="date" id="date" value="{{ $purchase->date }}" class="form-control">
-                                                        </div>
-                                                    </div>
-                                                     <div class="col-3 mt-2">
-                                                        <div class="form-group">
-                                                            <label for="vendor">Vendor</label>
-                                                            <select name="vendorID" id="vendorID"  class="selectize1">
-                                                                @foreach ($vendors as $vendor)
-                                                                    <option value="{{ $vendor->id }}" @selected($vendor->id == $purchase->vendor_id)>{{ $vendor->title }}</option>
-                                                                @endforeach
-                                                            </select>
-                                                        </div>
-                                                        <div class="form-group vendorName mt-2">
-                                                            <label for="vendorName">Name</label>
-                                                            <input type="text" name="vendorName" id="vendorName" class="form-control">
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-3 mt-2">
-                                                        <div class="form-group">
-                                                            <label for="status">Payment Status</label>
-                                                            <select name="status" id="status1" class="form-control">
-                                                                <option value="paid" @selected($purchase->payment_status == 'paid')>Paid</option>
-                                                                <option value="pending" @selected($purchase->payment_status == 'pending')>Pending</option>
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                      <div class="col-3 mt-2">
-                                                        <div class="form-group">
-                                                            <label for="account">Account</label>
-                                                            <select name="accountID" id="account" class="selectize1">
-                                                                @foreach ($accounts as $account)
-                                                                    <option value="{{ $account->id }}">{{ $account->title }}</option>
-                                                                @endforeach
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-12 mt-2">
-                                                        <div class="form-group">
-                                                            <label for="notes">Notes</label>
-                                                            <textarea name="notes" id="notes" class="form-control" cols="30" rows="5">{{$purchase->notes}}</textarea>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-12 mt-2">
-                                                        <button type="submit" class="btn btn-primary w-100">Update Purchase</button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
+                            <div class="col-md-12 mt-2">
+                                <button type="submit" class="btn btn-primary w-100">Update</button>
                             </div>
+                        </div>
 
-                        </form>
+                    </form>
                 </div>
-
             </div>
-
+            <!--end card-->
         </div>
-        <!--end card-->
+        <!--end col-->
     </div>
-    <!--end col-->
-    </div>
-   
     <!--end row-->
 @endsection
-
 @section('page-css')
     <link rel="stylesheet" href="{{ asset('assets/libs/selectize/selectize.min.css') }}">
     <style>
@@ -161,126 +194,54 @@
             padding: 5px 5px !important;
         }
     </style>
-
     <meta name="csrf-token" content="{{ csrf_token() }}">
 @endsection
 @section('page-js')
     <script src="{{ asset('assets/libs/selectize/selectize.min.js') }}"></script>
     <script>
-        $(".selectize1").selectize();
-        $(".selectize").selectize({
-            onChange: function(value) {
-                if (!value.length) return;
-                if (value != null) {
-                    getSingleProduct(value);
-                    this.clear();
-                    this.focus();
-                }
+        $(".selectize").selectize();
 
-            },
-        });
-
-        function getSingleProduct(id) {
-            $.ajax({
-                url: "{{ url('purchases/getproduct/') }}/" + id,
-                method: "GET",
-                success: function(product) {
-                    let found = $.grep(existingProducts, function(element) {
-                        return element === product.id;
-                    });
-                    if (found.length > 0) {
-
-                    } else {
-                        var id = product.id;
-                        var html = '<tr id="row_' + id + '">';
-                        html += '<td class="no-padding">' + product.name + '</td>';
-                        html += '<td class="no-padding"><input type="number" name="price[]" required step="any" value="'+product.price+'" min="0" class="form-control text-center no-padding" id="price_' + id + '"></td>';
-                        html += '<td class="no-padding"><input type="number" name="qty[]" oninput="updateChanges(' + id + ')" min="0" required step="any" value="1" class="form-control text-center no-padding" id="qty_' + id + '"></td>';
-                        html += '<td class="no-padding"><input type="number" name="amount[]" min="0.1" readonly required step="any" value="1" class="form-control text-center no-padding" id="amount_' + id + '"></td>';
-                        html += '<td class="no-padding"> <span class="btn btn-sm btn-danger" onclick="deleteRow('+id+')">X</span> </td>';
-                        html += '<input type="hidden" name="id[]" value="' + id + '">';
-                        html += '</tr>';
-                        $("#products_list").prepend(html);
-                        existingProducts.push(id);
-                        updateChanges(id);
-                    }
-                }
-            });
+        function calculateSlaughterAmount() {
+            var qty = $('#qty').val();
+            var slaughter_charges = $('#slaughter_charges').val();
+            var total = qty * slaughter_charges;
+            $('#slaughter_amount').val(total);
+            $('#ober_qty').val(qty);
+            calculateGrand();
         }
 
-        function updateChanges(id) {
-            var qty = parseFloat($('#qty_' + id).val());
-            var price = parseFloat($('#price_' + id).val());
-
-            var amount = qty * price;
-            $("#amount_"+id).val(amount.toFixed(2));
-            updateTotal();
-        }
-        updateTotal();
-
-        function updateTotal() {
-            var total = 0;
-            $("input[id^='amount_']").each(function() {
-                var inputId = $(this).attr('id');
-                var inputValue = $(this).val();
-                total += parseFloat(inputValue);
-            });
-
-            $("#totalAmount").html(total.toFixed(2));
-            var count = $("[id^='row_']").length;
-            var numQty = 0;
-            $("input[id^='qty_']").each(function() {
-                var value = parseFloat($(this).val());
-                var unit = $("")
-                if (!isNaN(value)) {
-                    numQty += value ;
-                }
-            });
-            $("#totalQty").html(count + "(" + numQty + ")");
+        function calculateTotal() {
+            var weight = $('#weight').val();
+            var price = $('#price').val();
+            var total = weight * price;
+            $('#total').val(total);
+            calculateGrand();
         }
 
-        function deleteRow(id) {
-            existingProducts = $.grep(existingProducts, function(value) {
-                return value !== id;
-            });
-            $('#row_'+id).remove();
-            updateTotal();
+        function calculateRejectedTotal() {
+            var weight = $('#rejected_weight').val();
+            var price = $('#rejected_price').val();
+            var total = weight * price;
+            $('#rejected_total').val(total);
+            calculateGrand();
         }
 
-        function checkAccount()
-    {
-        var id = $("#vendorID").find(":selected").val();
-        console.log(id);
-        if(id == 2)
+        function calculateOberTotal() {
+            var qty = $('#ober_qty').val();
+            var price = $('#ober_price').val();
+            var total = qty * price;
+            $('#ober_total').val(total);
+            calculateGrand();
+        }
+
+        function calculateGrand()
         {
-            $(".vendorName").removeClass("d-none");
-            $('#status1 option').each(function() {
-            var optionValue = $(this).val();
-            if (optionValue === 'advanced' || optionValue === 'pending' || optionValue === 'partial') {
-                $(this).prop('disabled', true);
-            }
-            if (optionValue === 'paid') {
-                $(this).prop('selected', true);
-            }
-            });
+            var slaughter_amount = parseFloat($('#slaughter_amount').val() || 0);
+            var total = parseFloat($('#total').val() || 0);
+            var rejected_total = parseFloat($('#rejected_total').val() || 0);
+            var ober_total = parseFloat($('#ober_total').val() || 0);
+            var grand_total =  total + rejected_total + ober_total - slaughter_amount;
+            $('#grand_total').val(grand_total);
         }
-        else
-        {
-            $(".vendorName").addClass("d-none");
-            $('#status1 option').each(function() {
-            var optionValue = $(this).val();
-            if (optionValue === 'advanced' || optionValue === 'pending' || optionValue === 'partial') {
-                $(this).prop('disabled', false);
-            }
-            });
-        }
-    }
-   
-
-    $("#vendorID").on("change", function(){
-        checkAccount();
-    });
-    checkAccount();
-
     </script>
 @endsection

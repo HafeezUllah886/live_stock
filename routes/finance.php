@@ -4,6 +4,9 @@ use App\Http\Controllers\AccountAdjustmentController;
 use App\Http\Controllers\AccountsController;
 use App\Http\Controllers\ExpenseCategoriesController;
 use App\Http\Controllers\ExpensesController;
+use App\Http\Controllers\PaymentsController;
+use App\Http\Controllers\PaymentsReceivingController;
+use App\Http\Controllers\RouteExpensesController;
 use App\Http\Controllers\StaffAmountAdjustmentController;
 use App\Http\Controllers\TransferController;
 use App\Http\Middleware\confirmPassword;
@@ -27,6 +30,15 @@ Route::middleware('auth')->group(function () {
     Route::get('expense/delete/{ref}', [ExpensesController::class, 'delete'])->name('expense.delete')->middleware(confirmPassword::class);
 
     Route::resource('expense_categories', ExpenseCategoriesController::class);
+
+     Route::resource('payments', PaymentsController::class);
+    Route::get('payments/delete/{ref}', [PaymentsController::class, 'delete'])->name('payments.delete')->middleware(confirmPassword::class);
+
+    Route::resource('payments_receiving', PaymentsReceivingController::class);
+    Route::get('payments_receiving/delete/{ref}', [PaymentsReceivingController::class, 'delete'])->name('payments_receiving.delete')->middleware(confirmPassword::class);
+
+    Route::resource('route_expenses', RouteExpensesController::class);
+    Route::get('route_expenses/delete/{ref}', [RouteExpensesController::class, 'delete'])->name('route_expenses.delete')->middleware(confirmPassword::class);
 
 
     Route::get('/accountbalance/{id}', function ($id) {

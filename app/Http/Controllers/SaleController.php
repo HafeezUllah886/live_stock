@@ -6,9 +6,8 @@ use App\Http\Middleware\confirmPassword;
 use App\Models\accounts;
 use App\Models\categories;
 use App\Models\products;
-use App\Models\purchase;
-use App\Models\purchase_details;
-use App\Models\purchase_payments;
+use App\Models\sale;
+use App\Models\sale_details;
 use App\Models\stock;
 use App\Models\transactions;
 use App\Models\units;
@@ -19,7 +18,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Routing\Controller;
 
-class PurchaseController extends Controller
+class SaleController extends Controller
 {
     public function __construct()
     {
@@ -33,8 +32,8 @@ class PurchaseController extends Controller
     {
         $from = $request->from ?? firstDayOfMonth();
         $to = $request->to ?? date('Y-m-d');
-        $purchases = purchase::whereBetween('date', [$from, $to])->get();
-        return view('purchase.index', compact('purchases', 'from', 'to'));
+        $sales = sale::whereBetween('date', [$from, $to])->get();
+        return view('sale.index', compact('sales', 'from', 'to'));
     }
 
     /**
@@ -43,9 +42,9 @@ class PurchaseController extends Controller
     public function create()
     {
         $products = products::active()->get();
-        $vendors = accounts::vendor()->get();
+        $customers = accounts::customerAndFactory()->get();
         $accounts = accounts::business()->get();
-        return view('purchase.create', compact('products', 'vendors', 'accounts'));
+        return view('sale.create', compact('products', 'customers', 'accounts'));
     }
 
     /**
@@ -53,6 +52,7 @@ class PurchaseController extends Controller
      */
     public function store(Request $request)
     {
+
         try
         {
             if($request->isNotFilled('id'))
@@ -61,12 +61,12 @@ class PurchaseController extends Controller
             }
             DB::beginTransaction();
             $ref = getRef();
-            $purchase = purchase::create(
+            $sale = sale::create(
                 [
-                  'vendor_id'        => $request->vendorID,
+                  'customer_id'        => $request->customerID,
                   'date'            => $request->date,
                   'notes'           => $request->notes,
-                  'vendorName'      => $request->vendorName,
+                  'customerName'      => $request->customerName,
                   'payment_status'  => $request->status,
                   'refID'           => $ref,
                 ]
@@ -84,9 +84,9 @@ class PurchaseController extends Controller
                 $amount = $price * $qty;
                 $total += $amount;
 
-                purchase_details::create(
+                sale_details::create(
                     [
-                        'purchase_id'    => $purchase->id,
+                        'sale_id'    => $sale->id,
                         'product_id'     => $id,
                         'price'         => $price,
                         'qty'           => $qty,
@@ -95,29 +95,31 @@ class PurchaseController extends Controller
                         'refID'         => $ref,
                     ]
                 );
-
                 $product = products::find($id);
-
                 $note_details .= $qty . "x " . $product->name . " at " . number_format($price) . "<br>";
-                createStock($id, $qty, 0, $request->date, "Purchased Notes: $request->notes", $ref);
+                createStock($id, 0, $qty, $request->date, "Sold Notes: $request->notes", $ref);
+
                 }
             }
-            $purchase->update(
+
+            $sale->update(
                 [
                     'total' => $total,
                 ]
             );
+
             if($request->status == 'paid')
             {
-                createTransaction($request->vendorID, $request->date, $total, $total, "Payment of Purchase No. $purchase->id Notes: $request->notes <br> $note_details", $ref, 'Purchase');
-                createTransaction($request->accountID, $request->date, 0, $total, "Payment of Purchase No. $purchase->id Notes: $request->notes <br> $note_details", $ref, 'Purchase');
+                createTransaction($request->customerID, $request->date, $total, $total, "Payment of Sale No. $sale->id <br> $note_details", $ref, 'Sale');
+                createTransaction($request->accountID, $request->date, $total, 0, "Payment of Sale No. $sale->id <br> $note_details", $ref, 'Sale');
             }
             else
             {
-                createTransaction($request->vendorID, $request->date, 0, $total, "Pending Amount of Purchase No. $purchase->id Notes: $request->notes <br> $note_details", $ref, 'Purchase');
+                createTransaction($request->customerID, $request->date, $total, 0, "Pending Amount of Sale No. $sale->id <br> $note_details", $ref, 'Sale');
             }
             DB::commit();
-            return back()->with('success', "Purchase Created");
+            return back()->with('success', "Sale Created");
+
         }
         catch(\Exception $e)
         {
@@ -130,31 +132,29 @@ class PurchaseController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(purchase $purchase)
+    public function show(sale $sale)
     {
-        return view('purchase.view', compact('purchase'));
+        return view('sale.view', compact('sale'));
     }
 
-  
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(purchase $purchase)
+    public function edit(sale $sale)
     {
         $products = products::orderby('name', 'asc')->get();
      
-        $vendors = accounts::vendor()->get();
+        $customers = accounts::customerAndFactory()->get();
         $accounts = accounts::business()->get();
-    
 
-        return view('purchase.edit', compact('products', 'vendors', 'accounts', 'purchase'));
+        return view('sale.edit', compact('products', 'customers', 'accounts', 'sale'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, purchase $purchase)
+    public function update(Request $request, sale $sale)
     {
         try
         {
@@ -164,25 +164,25 @@ class PurchaseController extends Controller
             }
             DB::beginTransaction();
           
-            foreach($purchase->details as $product)
+            foreach($sale->details as $product)
             {
                 stock::where('refID', $product->refID)->delete();
                 $product->delete();
             }
-            transactions::where('refID', $purchase->refID)->delete();
+            transactions::where('refID', $sale->refID)->delete();
 
-            $purchase->update(
+            $sale->update(
                 [
-              'vendor_id'        => $request->vendorID,
+              'customer_id'        => $request->customerID,
                   'date'            => $request->date,
                   'notes'           => $request->notes,
-                  'vendorName'      => $request->vendorName,
+                  'customerName'      => $request->customerName,
                   'payment_status'  => $request->status,
                   ]
             );
 
             $ids = $request->id;
-            $ref = $purchase->refID;
+            $ref = $sale->refID;
 
             $total = 0;
             $note_details = "";
@@ -196,9 +196,9 @@ class PurchaseController extends Controller
                 $amount = $price * $qty;
                 $total += $amount;
 
-                purchase_details::create(
+                sale_details::create(
                     [
-                        'purchase_id'    => $purchase->id,
+                        'sale_id'    => $sale->id,
                         'product_id'     => $id,
                         'price'         => $price,
                         'qty'           => $qty,
@@ -213,8 +213,7 @@ class PurchaseController extends Controller
 
                 }
             }
-        
-            $purchase->update(
+            $sale->update(
                 [
 
                     'total'       => $total,
@@ -223,16 +222,16 @@ class PurchaseController extends Controller
 
              if($request->status == 'paid')
             {   
-                createTransaction($request->vendorID, $request->date, $total, $total, "Payment of Purchase No. $purchase->id <br> $note_details", $ref, 'Purchase');
-                createTransaction($request->accountID, $request->date, 0, $total, "Payment of Purchase No. $purchase->id <br> $note_details", $ref, 'Purchase');
+                createTransaction($request->customerID, $request->date, $total, $total, "Payment of Sale No. $sale->id <br> $note_details", $ref, 'Sale');
+                createTransaction($request->accountID, $request->date, $total, 0, "Payment of Sale No. $sale->id <br> $note_details", $ref, 'Sale');
             }
             else
             {
-                createTransaction($request->vendorID, $request->date, 0, $total, "Pending Amount of Purchase No. $purchase->id <br> $note_details", $ref, 'Purchase');
+                createTransaction($request->customerID, $request->date, $total, 0, "Pending Amount of Sale No. $sale->id <br> $note_details", $ref, 'Sale');
             }
             DB::commit();
             session()->forget('confirmed_password');
-            return to_route('purchase.index')->with('success', "Purchase Updated");
+            return to_route('sale.index')->with('success', "Sale Updated");
         }
         catch(\Exception $e)
         {
@@ -250,23 +249,23 @@ class PurchaseController extends Controller
         try
         {
             DB::beginTransaction();
-            $purchase = purchase::find($id);
-            foreach($purchase->details as $product)
+            $sale = sale::find($id);
+            foreach($sale->details as $product)
             {
                 stock::where('refID', $product->refID)->delete();
                 $product->delete();
             }
-            transactions::where('refID', $purchase->refID)->delete();
-            $purchase->delete();
+            transactions::where('refID', $sale->refID)->delete();
+            $sale->delete();
             DB::commit();
             session()->forget('confirmed_password');
-            return redirect()->route('purchase.index')->with('success', "Purchase Deleted");
+            return to_route('sale.index')->with('success', "Sale Deleted");
         }
         catch(\Exception $e)
         {
             DB::rollBack();
             session()->forget('confirmed_password');
-            return redirect()->route('purchase.index')->with('error', $e->getMessage());
+            return to_route('sale.index')->with('error', $e->getMessage());
         }
     }
 

@@ -82,6 +82,25 @@
                     </div>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link menu-link" href="#sidebarSale" data-bs-toggle="collapse" role="button"
+                        aria-expanded="false" aria-controls="sidebarSale">
+                        <i class="ri-shopping-cart-line"></i> <span data-key="t-forms">Sale</span>
+                    </a>
+                    <div class="collapse menu-dropdown" id="sidebarSale">
+                        <ul class="nav nav-sm flex-column">
+                            <li class="nav-item">
+                                <a href="{{ route('sale.create') }}" class="nav-link"
+                                    data-key="t-basic-elements">Create Sale</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('sale.index') }}" class="nav-link"
+                                    data-key="t-form-select">
+                                    History </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link menu-link" href="#slaughter" data-bs-toggle="collapse" role="button"
                         aria-expanded="false" aria-controls="slaughter">
                         <i class="ri-knife-line"></i> <span data-key="t-forms">Slaughtering</span>
@@ -124,6 +143,40 @@
                     <div class="collapse menu-dropdown" id="sidebarFinance">
                         <ul class="nav nav-sm flex-column">
                             <li class="nav-item">
+                                <a href="{{ route('accounts_adjustments.index') }}" class="nav-link"
+                                    data-key="t-pickers">Account Adjustments </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('transfers.index') }}" class="nav-link"
+                                    data-key="t-pickers">Transfers </a>
+                            </li>
+                           <li class="nav-item">
+                                <a href="{{ route('payments_receiving.index') }}" class="nav-link"
+                                    data-key="t-input-masks">Receive Payments</a>
+                            </li> 
+                            <li class="nav-item">
+                                <a href="{{ route('payments.index') }}" class="nav-link"
+                                    data-key="t-input-masks">Make Payments</a>
+                            </li> 
+                            <li class="nav-item">
+                                <a href="{{ route('expenses.index') }}" class="nav-link"
+                                    data-key="t-pickers">Expenses </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('route_expenses.index') }}" class="nav-link"
+                                    data-key="t-pickers">Route Expenses </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link menu-link" href="#sidebarAccounts" data-bs-toggle="collapse" role="button"
+                        aria-expanded="false" aria-controls="sidebarAccounts">
+                        <i class="ri-file-list-3-line"></i> <span data-key="t-forms">Accounts</span>
+                    </a>
+                    <div class="collapse menu-dropdown" id="sidebarAccounts">
+                        <ul class="nav nav-sm flex-column">
+                            <li class="nav-item">
                                 <a href="{{ route('account.create') }}" class="nav-link"
                                     data-key="t-basic-elements">Create Account</a>
                             </li>
@@ -149,16 +202,8 @@
                                     data-key="t-pickers">Transporter Accounts </a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{ route('accounts_adjustments.index') }}" class="nav-link"
-                                    data-key="t-pickers">Account Adjustments </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="{{ route('transfers.index') }}" class="nav-link"
-                                    data-key="t-pickers">Transfers </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="{{ route('expenses.index') }}" class="nav-link"
-                                    data-key="t-pickers">Expenses </a>
+                                <a href="{{ route('accountsList', 'Butcher') }}" class="nav-link"
+                                    data-key="t-pickers">Butcher Accounts </a>
                             </li>
                         </ul>
                     </div>
