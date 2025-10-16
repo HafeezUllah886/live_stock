@@ -42,7 +42,7 @@ class PurchaseController extends Controller
      */
     public function create()
     {
-        $products = products::orderby('name', 'asc')->get();
+        $products = products::active()->get();
         $vendors = accounts::vendor()->get();
         $accounts = accounts::business()->get();
         return view('purchase.create', compact('products', 'vendors', 'accounts'));

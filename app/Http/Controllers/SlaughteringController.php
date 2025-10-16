@@ -43,7 +43,7 @@ class SlaughteringController extends Controller
         $total = $request->weight * $request->price;
         $rejected_total = $request->rejected_weight * $request->rejected_price;
         $ober_total = $request->ober_qty * $request->ober_price;
-        $grand_total = $slaughtering_amount + $total + $rejected_total + $ober_total;
+        $grand_total = $total + $rejected_total + $ober_total - $slaughtering_amount;
        try
        {
         DB::beginTransaction();
@@ -91,6 +91,10 @@ class SlaughteringController extends Controller
         $notes_for_ober = "Pending Amount of " . $request->ober_qty . " ober of " . $product->name . " at " . $request->ober_price . " per ober in " . $factory->title;
         createTransaction($ober_customer->id, $request->date, $ober_total, 0, $notes_for_ober, $ref);
 
+        $notes_for_stock = "Slaughtered for $customer->title at $factory->title";
+
+        createStock($request->product_id, 0, $request->qty, $request->date, $notes_for_stock, $ref);
+
         DB::commit();
         return redirect()->route('slaughter.index')->with('success', 'Slaughtering created successfully');
        }
@@ -105,9 +109,10 @@ class SlaughteringController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Slaughtering $slaughtering)
+    public function show($id)
     {
-        //
+        $slaughtering = Slaughtering::find($id);
+        return view('slaughtering.view', compact('slaughtering'));
     }
 
     /**

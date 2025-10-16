@@ -32,8 +32,8 @@ namespace App\Models {
      * @property-read \App\Models\products $product
      * @property-read \App\Models\accounts $customer
      * @property-read \App\Models\accounts $factory
+     * @property-read \App\Models\accounts $ober
      * @property-read \App\Models\accounts $butcher
-     * @property-read \App\Models\accounts $ober_customer
      * @method static \Illuminate\Database\Eloquent\Builder<Slaughtering>|Slaughtering whereId($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Slaughtering>|Slaughtering whereProductId($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Slaughtering>|Slaughtering whereFactoryId($value)

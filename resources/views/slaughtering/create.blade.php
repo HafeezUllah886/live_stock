@@ -239,7 +239,7 @@
             var total = parseFloat($('#total').val() || 0);
             var rejected_total = parseFloat($('#rejected_total').val() || 0);
             var ober_total = parseFloat($('#ober_total').val() || 0);
-            var grand_total = slaughter_amount + total + rejected_total + ober_total;
+            var grand_total =  total + rejected_total + ober_total - slaughter_amount;
             $('#grand_total').val(grand_total);
         }
     </script>

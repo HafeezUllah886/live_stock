@@ -22,14 +22,15 @@ class Slaughtering extends Model
     {
         return $this->belongsTo(accounts::class, 'factory_id');
     }
+    public function ober()
+    {
+        return $this->belongsTo(accounts::class, 'ober_id', 'id');
+    }
 
     public function butcher()
     {
         return $this->belongsTo(accounts::class, 'butcher_id');
     }
 
-    public function ober_customer()
-    {
-        return $this->belongsTo(accounts::class, 'ober_customer_id');
-    }
+    
 }
