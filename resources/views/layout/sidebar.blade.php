@@ -223,6 +223,19 @@
                         </ul>
                     </div>
                 </li>
+                 <li class="nav-item">
+                    <a class="nav-link menu-link" href="#reports" data-bs-toggle="collapse" role="button"
+                        aria-expanded="false" aria-controls="sidebarApps">
+                        <i class="ri-apps-2-line"></i> <span data-key="t-apps">Reports</span>
+                    </a>
+                    <div class="collapse menu-dropdown" id="reports">
+                        <ul class="nav nav-sm flex-column">
+                            <li class="nav-item">
+                                <a href="{{ route('reportBalanceSheet') }}" class="nav-link" data-key="t-chat">Balance Sheet </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
             </ul>
  
         </div>
